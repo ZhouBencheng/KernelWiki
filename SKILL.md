@@ -1,21 +1,23 @@
 ---
 name: KernelWiki
-description: Use when the user asks about optimizing NVIDIA Blackwell (SM100, B200) or Hopper (SM90, H100) GPU kernels — tcgen05/TMEM/CLC/NVFP4/2-SM cooperative, warp specialization, FlashAttention-4, DeepGEMM, FlashMLA, MoE, grouped GEMM, CuTe-DSL/PTX/Triton on Blackwell, or wants concrete PR references from CUTLASS/SGLang/vLLM/FlashInfer/PyTorch. Do NOT use for generic CUDA Q&A that is not Blackwell/Hopper-specific, host-side framework integration, or distributed systems (DeepEP/EPLB/DualPipe).
+description: Use when the user asks about optimizing NVIDIA Blackwell (SM100, B200), Thor (SM110, SM110a), Hopper (SM90, H100), or Jetson AGX Orin (sm_87, CC 8.7) GPU kernels — tcgen05/TMEM/CLC/NVFP4/2-SM cooperative, warp specialization, FlashAttention-4, DeepGEMM, FlashMLA, MoE, grouped GEMM, CuTe-DSL/PTX/Triton on Blackwell; or Orin sm_87 device identity, cp.async vs TMA, BF16 warp MMA scope and which Hopper/Blackwell features are unsupported; or wants concrete PR references from CUTLASS/SGLang/vLLM/FlashInfer/PyTorch. Do NOT use for generic CUDA Q&A that is not Blackwell/Thor/Hopper/Orin-specific, host-side framework integration, or distributed systems (DeepEP/EPLB/DualPipe).
 argument-hint: "[natural-language-question] | [--tag foo --type kernel] | [page-id]"
 allowed-tools: "Bash Read Grep Glob"
 ---
 
 # KernelWiki — Blackwell & Hopper Kernel Optimization Wiki
 
-> **Knowledge cutoff: 2026-04-27.** All upstream PR data, blog summaries, and version-claim entries reflect upstream state on or before this date (per `data/refresh-cutoff.yaml`). Re-run the refresh tooling to advance the cutoff.
+> **Corpus knowledge cutoff: 2026-04-27** (per `data/refresh-cutoff.yaml`). The focused [Thor guidance](wiki/hardware/thor.md) records separately dated source checks and hardware evidence from 2026-10-11; it does not advance the corpus cutoff. Re-run the refresh tooling to advance the cutoff.
 
-Query a structured, cross-referenced knowledge base of GPU kernel optimization for NVIDIA Blackwell (SM100) and Hopper (SM90) — 2179 merged PRs, 48 wiki synthesis pages, 7 competitions, 20 blogs, 11 doc summaries.
+Query a structured, cross-referenced knowledge base of GPU kernel optimization for NVIDIA Blackwell (SM100) and Hopper (SM90) — 2179 merged PRs, 49 wiki synthesis pages, 7 competitions, 20 blogs, 12 doc summaries.
 
 ## When To Use This Skill
 
 Trigger this skill when the user asks about:
 
 - **Blackwell/SM100 kernel programming** — tcgen05.mma, TMEM, CLC, 2-SM cooperative, NVFP4, FP8/FP4 block scaling, PDL/GDC
+- **Thor/SM110 target selection** — start with [Thor guidance](wiki/hardware/thor.md) (`hw-thor`); distinguish device CC 11.0 from the `sm110a` compilation target and check feature-specific applicability before reusing B200 pages
+- **Jetson AGX Orin / sm_87 (Ampere) target** — start with [Orin device page](wiki/hardware/orin.md) (`hw-orin`) and [Ampere async-copy & warp MMA](wiki/hardware/ampere-mma-async-copy.md) (`hw-ampere-mma-async-copy`): device identity (CC 8.7, native `sm_87`, not `sm_80`/`sm_86`), ordinary `cp.async` vs TMA, the bounded BF16 warp-MMA capability, which Hopper/Blackwell features (TMA/WGMMA/tcgen05/TMEM/CLC/native NVFP4) are **unsupported**, and the "measure, do not transfer" guidance for M=1 BF16/FP32 workloads. Query with `--architecture Orin` or `--architecture sm87`
 - **Kernel implementations** — FlashAttention-4, DeepGEMM, FlashMLA, NSA, GatedDeltaNet, NVFP4 GEMM/GEMV, fused MoE, gated dual GEMM
 - **Performance patterns** — low SM utilization, memory-bound, register pressure, compute-bound, tail effects, pipeline stalls
 - **DSLs for Blackwell** — CuTe DSL, CUDA C++ with PTX inline, Triton on Blackwell
@@ -40,12 +42,15 @@ python3 scripts/query.py "how to fuse gate-up dual GEMM on Blackwell"
 python3 scripts/query.py --tag nvfp4 --type kernel
 python3 scripts/query.py --repo cutlass --limit 20
 python3 scripts/query.py --symptom tail-effect --compact
+python3 scripts/query.py --architecture Thor --compact
+python3 scripts/query.py --architecture sm110a --compact
 ```
 
 Filters: `--type`, `--tag`, `--repo`, `--language`, `--architecture`,
 `--symptom`, `--confidence`, `--limit`, `--compact`, `--paths-only`. `--tag`
 and `--architecture` accept aliases — `--tag UMMA` matches `tcgen05`,
-`--architecture B200` matches `sm100`, etc.
+`--architecture B200` matches `sm100`, while `Thor` matches `sm110` and
+`sm110a` remains a distinct target.
 
 ### Path 2: Fetch a specific page by id or path
 
@@ -95,13 +100,13 @@ When answering from this KB:
 
 ## Knowledge Base Contents (knowledge cutoff: 2026-04-27)
 
-- **2265 total markdown pages** — 2179 PR references + 48 wiki synthesis + 20 blogs + 11 docs + 7 contests
+- **2267 total markdown pages** — 2179 PR references + 49 wiki synthesis + 20 blogs + 12 docs + 7 contests
 - **6 candidate ledgers** in `candidates/` — 4,222 merged PRs classified (include/defer/exclude) Jan 2025 – Apr 2026
 - **89 verbatim/extracted/derived asset bundles** in `artifacts/` (PR diffs, kernel files, blog code) — pinned to upstream SHAs via `PROVENANCE.yaml`
 - **6 auto-generated query indices** in `queries/`
 - **Controlled vocabulary** (80+ tags) in `data/tags.yaml`, alias map in `data/aliases.yaml`
 - **Hybrid version-claim registry** — per-page `version_sensitive: <id>` pointers + `data/version-claims.yaml` central registry, validated for bidirectional consistency
-- **Validator** `scripts/validate.py` — 2265 files / 89 bundles / 6 ledgers / 0 errors
+- **Validator** `scripts/validate.py` — 2267 files / 89 bundles / 6 ledgers / 0 errors
 - **Blackwell-first** — SM90 pages only appear when they carry explicit `blackwell_relevance`
 
 The knowledge cutoff date is the last day on which upstream PRs / blog snapshots were refreshed. To advance it: run `scripts/refresh_candidate_ledger.py`, regenerate PR pages, then bump `data/refresh-cutoff.yaml::cutoff_date`.
@@ -109,6 +114,7 @@ The knowledge cutoff date is the last day on which upstream PRs / blog snapshots
 ## Quality Guarantees
 
 - Every `verified` page has official-doc + upstream-code evidence
+- `verified` is source confidence; Thor execution evidence and pending checks are recorded separately in `hw-thor`
 - Every technique/kernel/language page has a compilable snippet
 - Every PR page has `inclusion_reason` and `status: merged`
 - All Hopper-inclusive pages have explicit `blackwell_relevance`

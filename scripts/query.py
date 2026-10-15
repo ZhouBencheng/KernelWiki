@@ -64,6 +64,67 @@ def expand_keyword(kw):
     return [kw]
 
 
+_TAGS_CACHE = None
+
+
+def _load_tags():
+    """Return data/tags.yaml parsed once (the controlled vocabulary)."""
+    global _TAGS_CACHE
+    if _TAGS_CACHE is not None:
+        return _TAGS_CACHE
+    try:
+        _TAGS_CACHE = yaml.safe_load(
+            (WIKI_ROOT / "data" / "tags.yaml").read_text(encoding="utf-8")) or {}
+    except Exception:
+        _TAGS_CACHE = {}
+    return _TAGS_CACHE
+
+
+def load_arch_canonicals():
+    """Return the set of device-architecture canonical names (data/tags.yaml).
+
+    These are the tokens a page may legitimately carry in its `architectures:`
+    field; a compiler-target family such as `sm110f` is deliberately excluded.
+    """
+    return {str(a).lower() for a in (_load_tags().get("architectures") or [])}
+
+
+def load_target_families():
+    """Return {query-canonical: page-target-token} for compiler-target families
+    that have NO device-architecture equivalent, e.g. {'sm110f': 'sm_110f'}.
+
+    Derived from the `targets` and `architectures` vocabularies so a future
+    family (sm120f, ...) is picked up without code changes: a target whose bare
+    spelling is also a device architecture (sm_110 -> sm110) routes through
+    device identity, not the separate compiler-target field.
+    """
+    arch_canonicals = load_arch_canonicals()
+    families = {}
+    for tgt in (_load_tags().get("targets") or []):
+        canonical = str(tgt).replace("_", "").lower()  # sm_110f -> sm110f
+        if canonical not in arch_canonicals:
+            families[canonical] = str(tgt).lower()
+    return families
+
+
+def detect_query_archs(keywords):
+    """Return the set of device-architecture canonicals implied by free-text
+    keywords (e.g. 'Thor' -> 'sm110', 'B200' -> 'sm100').
+
+    Only device architectures are returned; a compiler-target family token such
+    as 'sm110f' is a target, not a device identity, and is handled by the
+    explicit --architecture filter instead of this keyword-driven rerank.
+    """
+    aliases = load_alias_expansions()
+    arch_canonicals = load_arch_canonicals()
+    found = set()
+    for kw in keywords:
+        canonical = aliases.get(kw.lower(), kw.lower())
+        if canonical in arch_canonicals:
+            found.add(canonical)
+    return found
+
+
 def load_frontmatter(path):
     """Parse YAML frontmatter from a markdown file. Returns (fm_dict, body_str) or (None, None)."""
     try:
@@ -142,8 +203,48 @@ def score_keyword_match(fm, body, keywords):
     return score
 
 
+def apply_architecture_rerank(pages, keywords):
+    """Assign a deterministic architecture tier so pages matching the query's
+    device architecture sort above cross-architecture references.
+
+    Pure post-filter: no page is removed and keyword scores are untouched. When
+    the query names an architecture (e.g. 'Thor' -> sm110), a page whose
+    `architectures:` intersects that set gets `_arch_tier = 1`; an
+    architecture-bearing page targeting a *different* architecture is kept at
+    tier 0 but marked `_transfer_limited` so its cross-architecture provenance
+    stays explicit. The tier is a sort key (see main), not a score mutation, so
+    it can never be overtaken by a keyword-dense page. A page carrying no
+    architecture, or a query naming none, stays at tier 0.
+    """
+    query_archs = detect_query_archs(keywords)
+    for p in pages:
+        p["_transfer_limited"] = False
+        p["_arch_tier"] = 0
+    if not query_archs:
+        return
+    for p in pages:
+        page_archs = {str(a).lower() for a in (p["fm"].get("architectures") or [])}
+        if page_archs & query_archs:
+            p["_arch_tier"] = 1
+        elif page_archs:
+            p["_transfer_limited"] = True
+
+
 def filter_pages(pages, args):
     """Apply CLI filters to narrow the page set."""
+    # Resolve the --architecture filter once (constant across all pages): a
+    # compiler-target family routes against each page's `targets:` field, every
+    # other token against the device `architectures:` field.
+    arch_filter = None
+    if args.architecture:
+        tok = args.architecture.strip().lower()
+        canonical = load_alias_expansions().get(tok, tok)
+        families = load_target_families()
+        if canonical in families:
+            arch_filter = ("target", families[canonical])
+        else:
+            arch_filter = ("arch", {v.lower() for v in expand_keyword(args.architecture)})
+
     out = []
     for p in pages:
         fm = p["fm"]
@@ -175,11 +276,18 @@ def filter_pages(pages, args):
             if args.language not in langs and args.language not in tags:
                 continue
 
-        if args.architecture:
-            archs = {a.lower() for a in (fm.get("architectures") or [])}
-            arch_variants = {v.lower() for v in expand_keyword(args.architecture)}
-            if not (archs & arch_variants):
-                continue
+        if arch_filter:
+            kind, want = arch_filter
+            if kind == "target":
+                # Compiler-target family: match the page's `targets:` metadata,
+                # never its device `architectures:` identity (AC-1.1).
+                targets = {str(t).lower() for t in (fm.get("targets") or [])}
+                if want not in targets:
+                    continue
+            else:
+                archs = {a.lower() for a in (fm.get("architectures") or [])}
+                if not (archs & want):
+                    continue
 
         if args.symptom:
             symptoms = set(fm.get("symptoms") or [])
@@ -257,6 +365,25 @@ def filter_pages(pages, args):
     return out
 
 
+def evidence_label(fm):
+    """Return the page's evidence-status label for display.
+
+    `evidence_status` records whether a claim is only compiled, actually
+    executed, profiled, or still pending on the target device. It is a
+    different axis from source `confidence`; a page that does not track it
+    shows '-' rather than borrowing its confidence value.
+    """
+    status = fm.get("evidence_status")
+    return str(status) if status else "-"
+
+
+def arch_label(fm):
+    archs = fm.get("architectures")
+    if isinstance(archs, list) and archs:
+        return ",".join(str(a) for a in archs)
+    return "-"
+
+
 def format_result(page, compact=False):
     """Format a single page as a readable line."""
     fm = page["fm"]
@@ -264,9 +391,15 @@ def format_result(page, compact=False):
     path = page["path"]
     pid = fm.get("id", "")
     ptype = page.get("_ptype", "?")
+    transfer = page.get("_transfer_limited", False)
+    flag = "  [transfer-limited]" if transfer else ""
 
     if compact:
-        return f"  [{ptype}] {pid}: {title}  ({path})"
+        tgts = fm.get("targets")
+        target_seg = f" target={','.join(str(t) for t in tgts)}" if tgts else ""
+        return (f"  [{ptype}] {pid}: {title}  "
+                f"arch={arch_label(fm)}{target_seg} evidence={evidence_label(fm)}{flag}"
+                f"  ({path})")
 
     # Rich: include key metadata
     lines = [f"## {title}"]
@@ -275,6 +408,12 @@ def format_result(page, compact=False):
     lines.append(f"- **path**: `{path}`")
     if "architectures" in fm:
         lines.append(f"- **architectures**: {fm['architectures']}")
+    if "targets" in fm:
+        lines.append(f"- **targets**: {fm['targets']}")
+    lines.append(f"- **evidence_status**: {evidence_label(fm)}")
+    if transfer:
+        lines.append("- **transfer**: cross-architecture reference — provenance "
+                     "preserved; validate on the requested target before reuse")
     for k in ("confidence", "reproducibility"):
         if k in fm:
             lines.append(f"- **{k}**: {fm[k]}")
@@ -297,7 +436,7 @@ def main():
     parser.add_argument("--tag", help="Filter by tag (must appear in tags/techniques/hardware_features/kernel_types/languages)")
     parser.add_argument("--repo", help="Filter by source repo (partial match, e.g. 'cutlass')")
     parser.add_argument("--language", help="Filter by language/DSL (cute-dsl, cuda-cpp, ptx, triton, etc.)")
-    parser.add_argument("--architecture", help="Filter by architecture (sm100, sm100a, sm90, sm90a)")
+    parser.add_argument("--architecture", help="Filter by device architecture (sm100, sm110, sm110a, sm90, ...) or by compiler-target family (sm110f, matched against a page's targets metadata)")
     parser.add_argument("--symptom", help="Filter by pattern symptom (memory-bound, register-pressure, etc.)")
     parser.add_argument("--confidence", help="Filter by confidence (verified, source-reported, inferred, experimental)")
     parser.add_argument("--has-code", action="store_true", help="Only return pages whose artifact_dir contains at least one source file")
@@ -320,7 +459,8 @@ def main():
         for p in pages:
             p["_score"] = score_keyword_match(p["fm"], p["body"], keywords)
         pages = [p for p in pages if p["_score"] > 0]
-        pages.sort(key=lambda x: (-x["_score"], x["path"]))
+        apply_architecture_rerank(pages, keywords)
+        pages.sort(key=lambda x: (-x["_arch_tier"], -x["_score"], x["path"]))
     else:
         pages.sort(key=lambda x: x["path"])
 

@@ -279,6 +279,21 @@ def validate_file(filepath, schemas, valid_tags, all_source_ids, code_langs):
             if fm[arch_field] not in valid_archs:
                 errors.append(f"{rel}: {arch_field} '{fm[arch_field]}' is not a known architecture")
 
+    # Validate compiler-target families (`targets:`). This vocabulary is kept
+    # disjoint from device `architectures:` so a compile-target family can never
+    # be presented as a device identity, and vice versa (a target token such as
+    # sm_110f in `architectures:` is already rejected as an unknown architecture).
+    valid_targets = set(valid_tags.get("targets", []))
+    if "targets" in fm and isinstance(fm["targets"], list):
+        for tgt in fm["targets"]:
+            if tgt not in valid_targets:
+                errors.append(f"{rel}: unknown compiler target '{tgt}'")
+
+    # Validate evidence_status ladder (documented/compiled/executed/profiled).
+    valid_ev = set(valid_tags.get("evidence_status", []))
+    if "evidence_status" in fm and fm["evidence_status"] not in valid_ev:
+        errors.append(f"{rel}: invalid evidence_status '{fm['evidence_status']}'")
+
     # Validate confidence
     valid_conf = set(valid_tags.get("confidence", []))
     if "confidence" in fm and fm["confidence"] not in valid_conf:
@@ -709,6 +724,301 @@ def validate_version_claims_registry(all_source_ids):
             continue
         if ptr not in claim_by_id:
             errors.append(f"{md_file.relative_to(REPO_ROOT)}: version_sensitive id '{ptr}' does not resolve to data/version-claims.yaml")
+
+    return errors
+
+
+## Thor (SM110) source / evidence registry consistency.
+##
+## Enforces the four-axis separation in data/thor-evidence.yaml: a record may
+## claim a runtime rung (executed/profiled) only with the matching receipts,
+## every source_id must resolve, device/tool identity must match the probe
+## inventory, the feature must be a real Thor feature (not invented), and a
+## pending record must name a concrete missing check without claiming a result.
+##
+## `data`/`valid_tags` may be injected so CPU tests can validate crafted records
+## without touching the on-disk registry.
+def _is_sha256(v):
+    """True only for a 64-char lowercase-hex SHA-256 digest."""
+    if not isinstance(v, str) or len(v) != 64:
+        return False
+    return all(c in "0123456789abcdef" for c in v.lower())
+
+
+def _hashed_receipts(items, id_key):
+    """True iff `items` is a non-empty list of mappings, each DECLARING a 64-hex
+    `sha256` string and the identifying key (`kind` for artifacts, `report` for
+    NCU records). This is a STRUCTURAL check: a bare string or a hashless entry is
+    rejected, but it does NOT read bytes, so it cannot by itself establish that a
+    declared report exists or that the digest matches a real file — the
+    authoritative byte/existence gate is root's strict receipt checker (task11).
+    """
+    if not isinstance(items, list) or not items:
+        return False
+    for it in items:
+        if not isinstance(it, dict) or not it.get(id_key) or not _is_sha256(it.get("sha256")):
+            return False
+    return True
+
+
+def validate_thor_evidence_registry(all_source_ids, valid_tags, data=None):
+    """Return list of error strings for Thor evidence-registry consistency.
+
+    This is a STRUCTURAL / schema gate over DECLARED fields: it checks shape, the
+    evidence ladder, source-ID resolution, the declared device/tool identity
+    against the declared probe inventory, and that a profiled record's cited NCU
+    receipts DECLARE kernels/sections that mention the record's declared feature
+    (a declared-consistency check, not proof that a receipt is genuinely that
+    feature). It deliberately does NOT read artifact bytes or verify that a digest
+    matches a real file; the actual bytes, feature, target and stage are
+    established by root's strict receipt checker against an explicit evidence root
+    (task11), using the external verification lane — not this CPU-only check.
+    """
+    label = "data/thor-evidence.yaml"
+    if data is None:
+        reg_path = DATA_DIR / "thor-evidence.yaml"
+        if not reg_path.is_file():
+            return [f"{label}: missing (Thor evidence registry required)"]
+        try:
+            data = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
+        except yaml.YAMLError as e:
+            return [f"{label}: invalid YAML ({e})"]
+    return validate_evidence_registry(
+        data=data, label=label, all_source_ids=all_source_ids, valid_tags=valid_tags)
+
+
+def validate_orin_evidence_registry(all_source_ids, valid_tags, data=None):
+    """Return error strings for the Orin (sm_87) evidence registry.
+
+    Uses the exact same shared structural seam as Thor (same arguments, same
+    allowed feature set). The seam's `applicability: unsupported` axis — shared,
+    not Orin-specific code — is what the Orin registry's *data* exercises to
+    document features this target cannot run, carrying documentation (scope +
+    reason + resolvable source_ids) and NO positive evidence ladder. The file is
+    optional: an absent registry is not an error (the Thor registry remains the
+    required one).
+    """
+    label = "data/orin-evidence.yaml"
+    if data is None:
+        reg_path = DATA_DIR / "orin-evidence.yaml"
+        if not reg_path.is_file():
+            return []
+        try:
+            data = yaml.safe_load(reg_path.read_text(encoding="utf-8"))
+        except yaml.YAMLError as e:
+            return [f"{label}: invalid YAML ({e})"]
+    return validate_evidence_registry(
+        data=data, label=label, all_source_ids=all_source_ids, valid_tags=valid_tags)
+
+
+def _source_id_errors(source_ids, where, all_source_ids):
+    """Shared check: `source_ids` is a non-empty list and every id resolves.
+
+    Used by both the `unsupported` applicability branch and the normal evidence
+    ladder so the two never drift. Error strings are verbatim-stable.
+    """
+    if not isinstance(source_ids, list) or not source_ids:
+        return [f"{where}: 'source_ids' must be a non-empty list"]
+    return [f"{where}: source_id '{sid}' does not resolve"
+            for sid in source_ids if all_source_ids and sid not in all_source_ids]
+
+
+def validate_evidence_registry(*, data, label, all_source_ids, valid_tags):
+    """Shared structural / declared-consistency gate for an evidence registry
+    (Thor or Orin). The gate's scope is documented on
+    validate_thor_evidence_registry.
+
+    `label` is used verbatim in error messages so each registry reports under its
+    own path. The allowed feature set is the corpus hardware_features plus the
+    baseline `native-target` kind, identical for every registry. Besides the
+    evidence ladder, a record may use the `applicability` axis: an
+    `applicability: unsupported` record is a documentation-only statement that the
+    target cannot run the feature and must NOT carry any ladder field;
+    `supported`/`unknown`/absent applicability follows the ladder exactly as
+    before.
+    """
+    errors = []
+    if not isinstance(data, dict):
+        return [f"{label}: top level must be a mapping"]
+
+    valid_targets = set(valid_tags.get("targets", []))
+    valid_ev = set(valid_tags.get("evidence_status", []))
+    # A record's feature must be a real hardware feature; the baseline
+    # native-target compile/execute record is the only non-hardware-feature kind.
+    allowed_features = set(valid_tags.get("hardware_features", [])) | {"native-target"}
+
+    # Probe inventory is the single source of truth for device/tool identity.
+    inv = data.get("probe_inventory")
+    inv_device, inv_tool = {}, {}
+    if not isinstance(inv, dict):
+        errors.append(f"{label}: missing probe_inventory mapping")
+    else:
+        inv_device = inv.get("device") or {}
+        inv_tool = inv.get("tool") or {}
+        if not inv_device.get("cc"):
+            errors.append(f"{label}::probe_inventory: device.cc is required")
+        if not inv_tool.get("nvcc"):
+            errors.append(f"{label}::probe_inventory: tool.nvcc is required")
+
+    features = data.get("features")
+    if not isinstance(features, list) or not features:
+        errors.append(f"{label}: 'features' must be a non-empty list")
+        return errors
+
+    seen_ids = set()
+    for i, rec in enumerate(features):
+        if not isinstance(rec, dict):
+            errors.append(f"{label}::features[{i}]: must be a mapping")
+            continue
+        rid = rec.get("id")
+        if not rid:
+            errors.append(f"{label}::features[{i}]: missing id")
+            continue
+        where = f"{label}::{rid}"
+        if rid in seen_ids:
+            errors.append(f"{where}: duplicate record id")
+        seen_ids.add(rid)
+
+        feature = rec.get("feature")
+        if feature not in allowed_features:
+            errors.append(f"{where}: unsupported/invented feature '{feature}'")
+
+        targets = rec.get("targets")
+        if not isinstance(targets, list) or not targets:
+            errors.append(f"{where}: 'targets' must be a non-empty list")
+        else:
+            for tgt in targets:
+                if tgt not in valid_targets:
+                    errors.append(f"{where}: unknown compiler target '{tgt}'")
+
+        # Applicability axis, read BEFORE the evidence ladder. An explicit
+        # `unsupported` record documents a feature the target cannot run: it
+        # carries a scope + reason + resolvable source_ids and MUST NOT present any
+        # positive evidence-ladder field. Getting this order wrong would let a
+        # fabricated `pending` that also claims `unsupported` slip through, so the
+        # branch returns early and never falls into the ladder. supported / unknown
+        # / absent applicability follows the ladder exactly as before.
+        applicability = rec.get("applicability")
+        if applicability not in (None, "supported", "unsupported", "unknown"):
+            errors.append(
+                f"{where}: invalid applicability '{applicability}' "
+                f"(expected supported, unsupported, or unknown)")
+        if applicability == "unsupported":
+            if not str(rec.get("scope") or "").strip():
+                errors.append(
+                    f"{where}: unsupported applicability requires a non-empty scope")
+            if not str(rec.get("reason") or "").strip():
+                errors.append(
+                    f"{where}: unsupported applicability requires a non-empty reason")
+            errors.extend(_source_id_errors(rec.get("source_ids"), where, all_source_ids))
+            # Documentation-only: no positive-evidence field may even be present.
+            # An empty list or explicit null still counts as present (membership
+            # test, not truthiness), so a fabricated empty ladder is rejected.
+            for ladder_field in ("evidence_status", "runtime_check",
+                                 "missing_check", "artifacts", "ncu_records"):
+                if ladder_field in rec:
+                    errors.append(
+                        f"{where}: unsupported applicability must not carry "
+                        f"evidence-ladder field '{ladder_field}' (documentation-only)")
+            continue
+
+        status = rec.get("evidence_status")
+        if status not in valid_ev:
+            errors.append(f"{where}: invalid evidence_status '{status}'")
+
+        errors.extend(_source_id_errors(rec.get("source_ids"), where, all_source_ids))
+
+        # Device / tool identity must match the recorded probe inventory.
+        rec_device = rec.get("device") or {}
+        rec_tool = rec.get("tool") or {}
+        if rec_device.get("cc") and inv_device.get("cc") and \
+                rec_device["cc"] != inv_device["cc"]:
+            errors.append(
+                f"{where}: device cc '{rec_device['cc']}' mismatches probe "
+                f"inventory '{inv_device['cc']}'")
+        for tk in ("nvcc", "ncu"):
+            if rec_tool.get(tk) and inv_tool.get(tk) and rec_tool[tk] != inv_tool[tk]:
+                errors.append(
+                    f"{where}: tool {tk} '{rec_tool[tk]}' mismatches probe "
+                    f"inventory '{inv_tool[tk]}'")
+
+        has_runtime = bool(str(rec.get("runtime_check") or "").strip())
+        has_artifacts = _hashed_receipts(rec.get("artifacts"), "kind")
+        ncu_records = rec.get("ncu_records") or []
+        has_ncu = _hashed_receipts(rec.get("ncu_records"), "report")
+        ncu_present = rec.get("ncu_records") is not None
+        artifacts_present = rec.get("artifacts") is not None
+
+        # Evidence ladder (declared structure). A runtime rung (executed/profiled)
+        # must DECLARE hash-bearing receipts — a non-empty string or a hashless
+        # report name is rejected structurally. A compile rung declares build
+        # receipts only, and a pending rung declares none. This enforces the
+        # declared shape of the ladder; whether the declared bytes/stage are
+        # genuine is established by root's strict receipt checker (task11).
+        if status == "profiled":
+            if not has_runtime:
+                errors.append(f"{where}: profiled evidence requires a runtime_check")
+            if not has_artifacts:
+                errors.append(f"{where}: profiled evidence requires artifacts with sha256 receipts")
+            if not has_ncu:
+                errors.append(
+                    f"{where}: profiled evidence requires ncu_records, each a mapping "
+                    f"with a report name and a sha256 digest")
+            else:
+                # Feature <-> receipt DECLARED consistency: the cited NCU records
+                # must DECLARE kernels/sections that mention this record's declared
+                # feature. This catches a declared mismatch (e.g. a receipt whose
+                # declared kernels name TMA while the record claims tcgen05); it
+                # does not prove the receipt was genuinely collected for that
+                # feature — that is root's strict receipt checker (task11).
+                feature_token = str(feature).lower()
+                parts = []
+                shape_ok = True
+                for ri, r in enumerate(ncu_records):
+                    rwhere = f"{where}: ncu_records[{ri}]"
+                    for field in ("kernels", "sections"):
+                        val = r.get(field)
+                        if val is None:
+                            continue
+                        if isinstance(val, list):
+                            parts.extend(str(x).lower() for x in val)
+                        else:
+                            errors.append(f"{rwhere}: '{field}' must be a list, "
+                                          f"got {type(val).__name__}")
+                            shape_ok = False
+                    # Per-receipt declaration: a receipt naming neither kernels nor
+                    # sections cannot ride on another receipt's label.
+                    if r.get("kernels") is None and r.get("sections") is None:
+                        errors.append(f"{rwhere}: each profiled receipt must declare its "
+                                      f"covered kernels/sections")
+                if shape_ok and not parts:
+                    errors.append(f"{where}: profiled ncu_records must declare the covered "
+                                  f"kernels/sections")
+                elif shape_ok and not any(feature_token in part for part in parts):
+                    errors.append(
+                        f"{where}: profiled feature '{feature}' is not reflected in the cited "
+                        f"ncu_records kernels/sections (receipt/feature mismatch)")
+        elif status == "executed":
+            if not has_runtime:
+                errors.append(f"{where}: executed evidence requires a runtime_check")
+            if not has_artifacts:
+                errors.append(f"{where}: executed evidence requires artifacts with sha256 receipts")
+            if ncu_present:
+                errors.append(f"{where}: executed evidence must not carry ncu_records (that is profiled)")
+        elif status == "compiled":
+            if not has_artifacts:
+                errors.append(f"{where}: compiled evidence requires artifacts with sha256 receipts")
+            if has_runtime:
+                errors.append(f"{where}: compiled evidence must not claim a runtime_check")
+            if ncu_present:
+                errors.append(f"{where}: compiled evidence must not carry ncu_records")
+        elif status == "pending":
+            if not str(rec.get("missing_check") or "").strip():
+                errors.append(f"{where}: pending evidence requires a concrete missing_check")
+            if has_runtime or ncu_present or artifacts_present:
+                errors.append(
+                    f"{where}: pending evidence must not carry runtime_check, ncu_records, "
+                    f"or artifacts (compile-only/absent evidence presented as a result)")
 
     return errors
 
@@ -1476,6 +1786,12 @@ def main():
 
     # AC-2 hybrid version-claim registry consistency.
     all_errors.extend(validate_version_claims_registry(all_source_ids))
+
+    # Thor source/evidence registry consistency.
+    all_errors.extend(validate_thor_evidence_registry(all_source_ids, tags))
+
+    # Orin source/evidence registry consistency (optional; shares the seam).
+    all_errors.extend(validate_orin_evidence_registry(all_source_ids, tags))
 
     # AC-11 inclusion-policy YAML scalar guard.
     all_errors.extend(validate_inclusion_policy_scalars())

@@ -19,6 +19,25 @@
 ## paths exist + carry the matching pointer.
 
 claims:
+  - id: vs-cuda-thor-targets
+    tool: cuda
+    claim_valid_for: ">=13.0"
+    last_verified_release: "13.0"
+    last_verified_at: 2026-10-11
+    applies_to:
+      - wiki/hardware/thor.md
+    source_ids:
+      - doc-nvidia-thor-targets
+      - pr-flashinfer-1608
+    notes: |
+      Source verification uses the archived CUDA 13.0 NVCC target list and
+      Programming Guide feature-set rules, plus FlashInfer's explicit
+      compute_110a/sm_110a compilation flags. The release of record remains
+      13.0; this entry does not assert a minimum working framework version.
+      Separate hardware observation on 2026-10-11: CUDA 13.2 nvcc V13.2.86,
+      driver 595.78, NVIDIA Thor CC 11.0, native sm_110 and sm_110a builds
+      passed a 257-element integer correctness and target-macro check.
+      This does not validate tcgen05, TMEM, NVFP4 or framework kernels.
   - id: vs-triton-3.6-blackwell-tcgen05
     tool: triton
     claim_valid_for: ">=3.6"

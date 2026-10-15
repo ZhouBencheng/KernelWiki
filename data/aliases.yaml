@@ -59,6 +59,25 @@ block-scale:
   - microscaling
   - MX
 
+# Ordinary asynchronous copy (cp.async / LDGSTS). Kept distinct from TMA
+# (cp.async.bulk): a bare cp.async is NOT a TMA bulk transfer.
+cp-async:
+  - cp.async
+  - "cp.async"
+  - LDGSTS
+  - "async copy"
+  - "asynchronous copy"
+
+# Warp-level matrix multiply-accumulate (HMMA / wmma.mma). Distinct from the
+# Hopper warpgroup `wgmma` and the Blackwell `tcgen05` tensor-core paths.
+mma:
+  - "warp MMA"
+  - "warp mma"
+  - HMMA
+  - mma.sync
+  - wmma
+  - "wmma.mma"
+
 # Architecture names
 sm100:
   - Blackwell
@@ -69,6 +88,26 @@ sm100:
   - GB300
   - "SM100"
 
+# Thor device identity uses the baseline architecture; the a target stays distinct.
+sm110:
+  - Thor
+  - NVIDIA Thor
+  - SM110
+  - sm_110
+
+sm110a:
+  - SM110a
+  - sm_110a
+
+# sm110f is a forward-compatible compiler-target family (the "11.0f" target),
+# not a device identity. It resolves through a page's compiler-target metadata,
+# kept separate from the device architecture vocabulary and from physical CC 11.0.
+sm110f:
+  - SM110f
+  - sm_110f
+  - compute_110f
+  - "11.0f"
+
 sm90:
   - Hopper
   - hopper
@@ -76,6 +115,18 @@ sm90:
   - H200
   - H800
   - "SM90"
+
+# Jetson AGX Orin device identity (measured CC 8.7). The aliases resolve only
+# the Orin board and its sm_87 target; the generic `Ampere` name and the
+# desktop sm80/sm86 capabilities are deliberately NOT aliases here, so an
+# unqualified Ampere query never routes to the Orin page.
+sm87:
+  - Orin
+  - "Jetson Orin"
+  - "AGX Orin"
+  - "Jetson AGX Orin"
+  - SM87
+  - sm_87
 
 # Kernel types
 moe:

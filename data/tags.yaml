@@ -5,9 +5,36 @@
 architectures:
   - sm100
   - sm100a
+  - sm110
+  - sm110a
   - sm90
   - sm90a
   - sm120
+  # Jetson AGX Orin device identity (measured CC 8.7). Deliberately distinct
+  # from desktop Ampere sm80/sm86 and never a generic `Ampere` alias; no
+  # architecture-specific `a`/`f` variant exists for this target.
+  - sm87
+
+## Compiler-target families (the `targets:` field). Separate from device
+## `architectures:` above: these name what the compiler was asked to build for
+## (`-gencode arch=.../code=...`), not the device's identity. `sm_110f` is the
+## forward-compatible "11.0f" family; it must never appear in `architectures:`.
+targets:
+  - sm_110
+  - sm_110a
+  - sm_110f
+  # Orin baseline compiler target. No `sm_87a`/`sm_87f` family exists.
+  - sm_87
+
+## Evidence status (the `evidence_status:` field and the Thor evidence
+## registry). A strictly increasing ladder: documented source support is not
+## compile acceptance, compile acceptance is not executed correctness, and
+## executed correctness is not profiled behavior.
+evidence_status:
+  - pending
+  - compiled
+  - executed
+  - profiled
 
 hardware_features:
   - tcgen05
@@ -27,6 +54,12 @@ hardware_features:
   - mbarrier
   - ldmatrix
   - stmatrix
+  # Ordinary asynchronous global->shared copy (cp.async / LDGSTS), distinct from
+  # the TMA bulk-copy engine (tma). Available on Ampere sm_87.
+  - cp-async
+  # Warp-level matrix-multiply-accumulate (HMMA / wmma.mma), distinct from the
+  # Hopper warpgroup wgmma and the Blackwell tcgen05 paths.
+  - mma
 
 techniques:
   - warp-specialization

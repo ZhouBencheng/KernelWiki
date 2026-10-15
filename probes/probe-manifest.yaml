@@ -1,0 +1,126 @@
+## Thor (SM110) self-checking probe manifest.
+##
+## Author-prepared staging for the root orchestrator to compile and run on real
+## Thor hardware under the shared GPU lock. Authors do NOT run these; they are
+## reusable source + exact commands + fixed expected outputs.
+##
+## The two source files here are byte-identical copies of the campaign harness
+## that was already validated on Thor (sha256 below match the evidence registry
+## and probe-build-02/validation-check receipts). Running the staged copies must
+## reproduce the recorded outcomes; a divergence is a real finding, not noise.
+##
+## Positive probes must PASS; the negative probe must be REJECTED by the
+## assembler, and the rejection is proven to be target-gating (not an incidental
+## syntax error) by the positive control that compiles the SAME source under an
+## architecture-specific / family target.
+
+toolchain:
+  nvcc: /usr/local/cuda-13.2/bin/nvcc          # CUDA 13.2.86
+  ncu: /opt/nvidia/nsight-compute/2026.1.1/ncu  # NCU 2026.1.1
+  common_flags: [-std=c++17, -O3, --fmad=false]
+
+execution:
+  working_directory: the skill root (so `probes/thor_probe.cu` resolves).
+  output_setup: >-
+    Create ONE fresh, non-existent output directory per run and export it as
+    `$OUT`, e.g.
+    `OUT="$(mktemp -d /home/cilab/zbc/thor-skills-sm110-20261012/probe-run-XXXXXXXX)"`.
+    Every binary and NCU export below is written under `"$OUT"`; never reuse an
+    existing directory. The `build:`/`run:`/`profile:` strings call the declared
+    absolute tool paths (`/usr/local/cuda-13.2/bin/nvcc`,
+    `/opt/nvidia/nsight-compute/2026.1.1/ncu`) directly, because on Thor the tools
+    are not on PATH (`which nvcc`/`which ncu` return nothing).
+  gpu_lock: >-
+    Wrap every on-device run and NCU collection in the external lock:
+    `flock /home/cilab/zbc/hmz-thor-validation.lock <command>`.
+  ncu_privilege: >-
+    NCU PM/warp sampling needs elevated access; the validated collection ran the
+    ncu command under `sudo -n` (non-interactive). Build and `--mode check` runs
+    do not need sudo.
+  shell_quoting: >-
+    `-DPROBE_TARGET` passes a C string literal, so the inner double quotes must
+    survive the shell: write it as -DPROBE_TARGET='"<target>"'. The NCU
+    --kernel-name regex contains parentheses and must be single-quoted. The
+    quoted forms below are copy-paste-safe for bash.
+
+sources:
+  thor_probe.cu:
+    sha256: 9791954036202eae55567dd248b66336ff3466e8416019d4aaf7cddfbd86ebcd
+    role: positive self-checking SIMT + TMA copy/reduce probe
+    self_check: >-
+      Validates finite and exact FP32 element copy and per-block sums with no
+      tolerance; a mismatch throws and the process prints {"status":"error"} and
+      exits 1. A pass prints {"status":"passed",...} and exits 0.
+    kernels: [thor_simt_copy_reduce, thor_tma_copy_reduce]
+  tcgen05_target_gate.cu:
+    sha256: 5e3d7ed86309cef8f4561e651ac6585c5e14ab027bf56dbcfac29f6de8abd1f4
+    role: compile-only tcgen05.fence target gate (NOT a feature correctness test)
+
+probes:
+  # --- Positive: native target compile + on-device check (evidence thor-native-target)
+  - id: native-target-compile-and-check
+    kind: positive
+    evidence_id: thor-native-target
+    targets: [sm_110, sm_110a, sm_110f]
+    build: >-
+      /usr/local/cuda-13.2/bin/nvcc -std=c++17 -O3 --fmad=false -arch=<target> -lineinfo
+      -DPROBE_TARGET='"<target>"' probes/thor_probe.cu -lcuda -o "$OUT/thor-probe-<target>"
+    build_expect: {exit_code: 0}
+    run: >-
+      "$OUT/thor-probe-<target>" --mode check
+    run_expect:
+      exit_code: 0
+      stdout_contains: ['"status":"passed"', '"compiled_target":"<target>"',
+                        '"device_name":"NVIDIA Thor"', '"compute_capability":[11,0]']
+
+  # --- Positive: genuine TMA copy+reduce executes correctly, then profiled (thor-tma-bulk-1d)
+  - id: tma-bulk-copy-reduce-profile
+    kind: positive
+    evidence_id: thor-tma-bulk-1d
+    targets: [sm_110]
+    build: >-
+      /usr/local/cuda-13.2/bin/nvcc -std=c++17 -O3 --fmad=false -arch=sm_110 -lineinfo
+      -DPROBE_TARGET='"sm_110"' probes/thor_probe.cu -lcuda -o "$OUT/thor-probe-sm_110-lineinfo"
+    build_expect: {exit_code: 0}
+    run: >-
+      "$OUT/thor-probe-sm_110-lineinfo" --mode check
+    run_note: exact FP32 equality for both kernels (no tolerance)
+    run_expect:
+      exit_code: 0
+      stdout_contains: ['"status":"passed"', '"name":"thor_tma_copy_reduce"']
+    profile: >-
+      flock /home/cilab/zbc/hmz-thor-validation.lock
+      sudo -n /opt/nvidia/nsight-compute/2026.1.1/ncu --config-file off --clock-control none --cache-control all
+      --replay-mode kernel --profile-from-start off --set full
+      --section PmSampling --section PmSampling_WarpStates
+      --kernel-name-base function --kernel-name 'regex:thor_(simt|tma)_copy_reduce'
+      --export "$OUT/probe-lineinfo" "$OUT/thor-probe-sm_110-lineinfo" --mode profile
+    profile_expect: {exit_code: 0, exports: ["$OUT/probe-lineinfo.ncu-rep"]}
+
+  # --- Negative: tcgen05.fence target gate is REJECTED under the base target...
+  - id: tcgen05-gate-rejected-on-base-target
+    kind: negative
+    evidence_id: thor-tcgen05-fence-gate
+    target: sm_110
+    build: >-
+      /usr/local/cuda-13.2/bin/nvcc -std=c++17 -O3 --fmad=false -arch=sm_110 -cubin
+      probes/tcgen05_target_gate.cu -o "$OUT/tcgen05-gate-sm_110.cubin"
+    build_expect:
+      exit_code: nonzero
+      rejection_reason: >-
+        tcgen05.fence requires an architecture-specific (sm_110a) or family
+        (sm_110f) target; the base sm_110 target does not accept it. This is a
+        documented unsupported combination, not a syntax error.
+
+  # --- ...proven NOT a syntax error by the positive control on sm_110a / sm_110f.
+  - id: tcgen05-gate-accepted-on-arch-and-family-target
+    kind: positive-control
+    evidence_id: thor-tcgen05-fence-gate
+    targets: [sm_110a, sm_110f]
+    build: >-
+      /usr/local/cuda-13.2/bin/nvcc -std=c++17 -O3 --fmad=false -arch=<target> -cubin
+      probes/tcgen05_target_gate.cu -o "$OUT/tcgen05-gate-<target>.cubin"
+    build_expect: {exit_code: 0}
+    note: >-
+      The identical source compiling cleanly here proves the base-target failure
+      above is target gating, not an incidental syntax error.

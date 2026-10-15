@@ -48,6 +48,8 @@ source-doc:
   optional:
     - author
     - description
+    - targets
+    - evidence_status
   constraints:
     source_category: [official-doc, paper]
 
@@ -120,6 +122,8 @@ wiki-hardware:
     - blackwell_relevance
     - evidence_basis
     - version_sensitive
+    - targets
+    - evidence_status
   constraints:
     type: hardware
     id_prefix: hw-
@@ -419,6 +423,60 @@ refresh-cutoff:
     - cutoff_date
   optional:
     - notes
+
+## Thor (SM110) source/evidence registry (data/thor-evidence.yaml). Validated
+## by scripts/validate.py::validate_thor_evidence_registry. Separates compiler
+## targets from device identity and the evidence ladder
+## (pending/compiled/executed/profiled) from source confidence.
+thor-evidence-registry:
+  required:
+    - probe_inventory
+    - features
+  probe_inventory_schema:
+    required:
+      - device
+      - tool
+    device_required:
+      - cc
+    tool_required:
+      - nvcc
+  feature_schema:
+    required:
+      - id
+      - feature
+      - targets
+      - evidence_status
+      - source_ids
+    optional:
+      - device
+      - tool
+      - runtime_check
+      - ncu_records
+      - artifacts
+      - missing_check
+    constraints:
+      evidence_status: [pending, compiled, executed, profiled]
+      runtime_check_required_when: "evidence_status in [executed, profiled]"
+      artifacts_required_when: "evidence_status in [compiled, executed, profiled]"
+      ncu_records_required_when: "evidence_status == profiled"
+      missing_check_required_when: "evidence_status == pending"
+      no_receipts_when: "evidence_status == pending (no runtime_check/ncu_records/artifacts)"
+  ## Every artifacts[] and ncu_records[] entry must be a mapping with a real
+  ## sha256 digest; a bare string or hashless entry is not accepted as proof.
+  artifact_receipt_schema:
+    required:
+      - kind
+      - sha256
+    optional:
+      - name
+      - path
+  ncu_record_schema:
+    required:
+      - report
+      - sha256
+    optional:
+      - sections
+      - kernels
 
 ## Phase 4: data/refresh-search-results.yaml (per AC-5). Per-repo search
 ## results from scripts/refresh_candidate_ledger.py. Byte-stable for

@@ -40,7 +40,7 @@ tcgen05.mma has 7 variants organized by precision and scaling mode:
 |---|---|---|---|---|---|---|
 | `tcgen05.mma.kind::f16` | FP16/BF16 | FP16/BF16 | FP32 | None | m128n256k16 | Standard half-precision |
 | `tcgen05.mma.kind::tf32` | TF32 | TF32 | FP32 | None | m128n256k8 | Single-precision approximation |
-| `tcgen05.mma.kind::f8f6f4` | FP8/FP6/FP4 | FP8/FP6/FP4 | FP32 | Block (UE8M0) | m128n256k32 | Narrow precision with native block scaling |
+| `tcgen05.mma.kind::f8f6f4` | FP8/FP6/FP4 | FP8/FP6/FP4 | FP32 | None (unscaled) | m128n256k32 | Narrow precision, **unscaled** — block scaling is the separate `.kind::mxf8f6f4.block_scale` variant (see below) |
 | `tcgen05.mma.kind::i8` | INT8 | INT8 | INT32 | None | m128n256k32 | Integer quantized inference |
 | `tcgen05.mma.kind::mxf8` | MXFP8 | MXFP8 | FP32 | MX (E8M0) | m128n256k32 | Microscaling FP8 |
 | `tcgen05.mma.kind::mxf4` | MXFP4 | MXFP4 | FP32 | MX (E8M0) | m128n256k64 | Microscaling FP4 |
@@ -74,7 +74,7 @@ Unlike `wgmma` which required coordinated issuance from a warpgroup (4 warps, 12
 
 1. **No warpgroup synchronization overhead** -- one elected thread (typically lane 0 of warp 0) issues the MMA.
 2. **Fully asynchronous** -- the instruction returns immediately; the hardware pipeline executes the MMA in the background.
-3. **Fence-based completion** -- the producer must insert explicit fences before reading results from TMEM.
+3. **Commit/mbarrier completion, fence-based ordering** -- completion is signalled by committing the MMA to an mbarrier and waiting on it; a fence (`tcgen05.fence::{before,after}_thread_sync`) only *orders* tcgen05 ops around a thread sync and is **not** itself a completion wait (see "Completion and Fences" below).
 
 ```cuda
 // Single-thread MMA issuance pattern
@@ -114,13 +114,44 @@ tcgen05.mma.cta_group::1.kind::f16 [tmem_addr], desc_a, desc_b, idesc, 0;
 tcgen05.mma.cta_group::2.kind::f16 [tmem_addr], desc_a, desc_b, idesc, 0;
 ```
 
-### FP8 with Block Scaling
+### Narrow precision: unscaled vs. block-scaled
+
+The pinned PTX ISA separates **unscaled** `.kind::f8f6f4` from the **block-scaled**
+`.kind::mxf8f6f4.block_scale` variant; they are different instructions. `f8f6f4`
+takes the usual instruction descriptor (no scale operand). Block scaling is a
+distinct kind that adds scale-matrix operands:
+
+The operand forms below are **conceptual** (illustrating operand shape, not
+standalone-compilable or Thor-runtime-tested); confirm the exact operands and
+qualifier applicability against the pinned
+[PTX 9.2 / CUDA 13.2 §9.7.16.10.9.1](https://docs.nvidia.com/cuda/archive/13.2.0/parallel-thread-execution/index.html)
+before use.
 
 ```ptx
-// FP8 with native UE8M0 block scaling
-// scale_desc encodes the per-block scale factors
-tcgen05.mma.cta_group::1.kind::f8f6f4 [tmem_addr], desc_a, desc_b, idesc, scale_desc;
+// Unscaled narrow precision: no scale operand (enable-input-d predicate last).
+tcgen05.mma.cta_group::1.kind::f8f6f4 [tmem_addr], desc_a, desc_b, idesc, enable_input_d;
+
+// Block-scaled narrow precision: a DIFFERENT kind. Per the spec it takes
+// BRACKETED scale-memory address operands (not bare registers) and the
+// enable-input-d predicate — e.g.:
+tcgen05.mma.cta_group::1.kind::mxf8f6f4.block_scale.scale_vec::1X
+    [tmem_addr], desc_a, desc_b, idesc, [scale_a_addr], [scale_b_addr], enable_input_d;
 ```
+
+Target-qualifier restrictions (pinned §9.7.16.10.9.1):
+
+- `.scale_vec::1X/2X/4X` is documented for **sm100a** only.
+- `.block16` / `.block32` require an **f-target** (`sm100f` or `sm110f`).
+- `scale-input-d` is documented for sm100a and the sm100 family — not blanket Thor.
+- The spec's family-support note (pinned PTX ISA §9.7.16.10.9.1) is
+  **target-variant-specific**. The family-specific (`f`) target list **excludes**
+  `.kind::i8`; the architecture-specific (`a`) target list **includes** it.
+  `.kind::i8` is integer MMA, not a block-scaled floating-point kind. Read the
+  exact target and qualifier restrictions for the variant you compile for, rather
+  than assuming a single Thor spelling.
+
+Do not infer blanket Thor (`sm110`/`sm110f`) support from the general instruction
+target list; a compile-target family is not a device identity.
 
 ### CUDA Inline PTX for BF16 MMA with Accumulation
 
@@ -159,31 +190,56 @@ __device__ void mma_bf16_accumulate(
 }
 ```
 
-## Critical Fences
+## Completion and Fences
 
-Fences are **mandatory** for correctness. The hardware does not implicitly synchronize between MMA and TMEM reads/writes.
+TMEM is not implicitly synchronized with MMA, and a fence alone is **not** a
+completion wait. Two **separate** mechanisms are required (pinned
+[PTX ISA 9.2 / CUDA 13.2](https://docs.nvidia.com/cuda/archive/13.2.0/parallel-thread-execution/index.html)):
 
-### tcgen05.mma.fence
+1. **Completion** — `tcgen05.mma` is asynchronous. Signal its completion with
+   `tcgen05.commit` to an mbarrier, then wait on that mbarrier before reading the
+   accumulator. A fence plus `__syncthreads()` does **not** wait for the MMA to
+   finish (§9.7.16.12.1 commit; §9.7.16.6.4.2 mbarrier completion).
+2. **Ordering** — `tcgen05.fence::before_thread_sync` /
+   `tcgen05.fence::after_thread_sync` order tcgen05 operations relative to a
+   thread synchronization; they do not themselves establish completion
+   (§9.7.16.11.1). The opcode is `tcgen05.fence`, **not** `tcgen05.mma.fence`,
+   and there is no `before_cluster_sync` qualifier.
 
-Insert before reading MMA results from TMEM:
+The two helpers below are **conceptual pseudocode** — not standalone-compilable
+or Thor-runtime-tested. They assume a single elected issuing thread and an
+mbarrier initialized for the MMA's completion arrival. Exact opcode qualifiers
+must match the MMA's `cta_group` and the pinned spec.
+
+### Completion: commit a committed MMA to an mbarrier (commit-only fragment)
 
 ```cuda
-// Wait for all outstanding tcgen05.mma operations to complete
-__device__ void fence_before_tmem_read() {
-    asm volatile("tcgen05.mma.fence::before_thread_sync;");
-    __syncthreads();  // Ensure all threads see the fence
+// COMMIT-ONLY fragment: this records the MMA's completion onto `mbar`. It does
+// NOT itself wait — the consumer (below) waits on `mbar` before reading.
+__device__ void commit_mma_completion(uint64_t* mbar) {
+    // Exact qualifiers must match the MMA's cta_group; see pinned §9.7.16.12.1.
+    asm volatile("tcgen05.commit.cta_group::1.mbarrier::arrive::one.b64 [%0];"
+                 :: "l"(mbar));
 }
 ```
 
-### tcgen05.mma.fence variants
+### Consumer: wait for completion, then order, then read
 
-```ptx
-// Fence before reading TMEM (most common)
-tcgen05.mma.fence::before_thread_sync;
-
-// Fence at CTA scope for cooperative operations
-tcgen05.mma.fence::before_cluster_sync;
+```cuda
+// One internally consistent sequence for safely reading the accumulator.
+// Responsibilities: `mbar` was committed to by commit_mma_completion; the caller
+// supplies the TMEM address to load from.
+__device__ void read_tmem_after_mma(uint64_t* mbar, uint32_t tmem_addr, float* out) {
+    mbarrier_try_wait_loop(mbar);                 // 1. WAIT for MMA completion
+    asm volatile("tcgen05.fence::after_thread_sync;");  // 2. consumer-side ordering
+                                                        //    before the TMEM load
+    tcgen05_ld(tmem_addr, out);                   // 3. now read (tcgen05.ld)
+}
 ```
+
+`tcgen05.fence::before_thread_sync` / `after_thread_sync` only *order* tcgen05 ops
+around a thread sync (step 2 and its producer-side counterpart); neither waits for
+completion — that is step 1's mbarrier wait.
 
 ### Correct Mainloop Fence Pattern
 
@@ -212,11 +268,16 @@ __device__ void gemm_mainloop(/* params */) {
         }
     }
 
-    // 4. CRITICAL: Fence before reading accumulator from TMEM
-    asm volatile("tcgen05.mma.fence::before_thread_sync;");
-    __syncthreads();
+    // 4. CRITICAL: wait for MMA COMPLETION first (commit the final MMA to an
+    //    mbarrier and wait on it) — a fence + __syncthreads does not wait.
+    wait_last_mma_via_mbarrier(mbar);
 
-    // 5. Now safe to read results from TMEM
+    // 5. Order the tcgen05 ops across the thread sync, THEN read TMEM. The
+    //    consumer-side after_thread_sync must sit between the completion wait and
+    //    the load (pinned §9.7.16.6.4.2).
+    asm volatile("tcgen05.fence::before_thread_sync;");
+    __syncthreads();
+    asm volatile("tcgen05.fence::after_thread_sync;");
     read_tmem_accumulator(tmem_addr, output);
 }
 ```
@@ -271,9 +332,12 @@ __device__ void blackwell_mma() {
         );
     }
 
-    // Fence + sync before reading results
-    asm volatile("tcgen05.mma.fence::before_thread_sync;");
+    // Wait for MMA completion FIRST (an explicit mbarrier wait — the fence does
+    // not wait), then order across the sync before reading:
+    wait_last_mma_via_mbarrier(mbar);
+    asm volatile("tcgen05.fence::before_thread_sync;");
     __syncthreads();
+    asm volatile("tcgen05.fence::after_thread_sync;");
     // Read from TMEM -- registers free for other work
 }
 ```

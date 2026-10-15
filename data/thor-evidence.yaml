@@ -1,0 +1,185 @@
+## Thor (SM110) source / evidence registry.
+##
+## Separates four distinct axes for each Thor feature so that source confidence
+## is never mistaken for execution:
+##   - targets:         the compiler-target family built for (sm_110/sm_110a/sm_110f),
+##                      kept separate from the device architecture identity.
+##   - evidence_status: the strongest *substantiated* rung on the ladder
+##                      pending < compiled < executed < profiled.
+##   - source_ids:      the corpus pages that support the claim.
+##   - artifacts / ncu_records: hash-bearing receipt DECLARATIONS. A runtime rung
+##                      (executed/profiled) must DECLARE artifacts with 64-hex
+##                      sha256 strings; a bare name or hashless entry is rejected
+##                      structurally (the bytes themselves are not read here).
+##
+## Validated by scripts/validate.py::validate_thor_evidence_registry, a STRUCTURAL
+## / declared-consistency gate: it rejects a record that DECLARES compile-only
+## evidence under a runtime/profiled status, missing source IDs, a declared
+## device/tool identity inconsistent with the declared probe inventory, an
+## unsupported/invented feature, and a pending record without a concrete
+## missing_check (or one that declares runtime/profiling/artifact receipts). It
+## does NOT read artifact bytes; the actual bytes, feature, target and stage are
+## established by root's strict receipt checker against an explicit evidence root
+## (task11), not by this CPU-only check.
+##
+## Receipts are immutable observations recorded by the root orchestrator in the
+## parent campaign (probe-build-02/, validation-check/, validation-profile/).
+## Those files are read-only; the digests below are copied from their manifests
+## and from the exported NCU reports, never edited here. A tcgen05.fence target
+## gate is compile-only and cannot substantiate MMA / TMEM / NVFP4 execution.
+
+## 2026-10-13 operator observations (documentation, not hardware-feature rungs).
+## External campaign roots:
+##   Thor: /home/cilab/zbc/embodiinfer-operators/profile/embodiinfer-thor-sm110-loop-20261013
+##   Local mirror: /Users/zbc/workspace/kda/profile/embodiinfer-thor-sm110-loop-20261013
+## Relative receipt path -> SHA256:
+##   analysis/active-gate-v2-performance-independent-review.md
+##     fa9365aed499f3ab56bba1ed9d764ebea289537c23cedcb19f15d38be7c239d5
+##   analysis/active-gate-v2-steady-actual-independent-evidence.json
+##     5dda332d576ff5c3c7c4bf0c11895d51d93d80a5811bc0074e6ad3ffee5ccaae
+##   analysis/active-gate-v2-ncu-independent-evidence.json
+##     1003cc3592ca5ea8f10a85f506b3d85149d11f7ee9ec88ee6949d1d848530231
+##   analysis/active-gate-v2-e2e-actual-independent-review.md
+##     16ea820b4f560f186f61bacfdee2e0f37c7a4eb26d9f7ffdfffba6ac2b84cdb2
+##   analysis/active-gate-v2-e2e-actual-independent-evidence.json
+##     89dd19b26416af81b66d6d7988b2d8e45388fe4007298a23644b2f5f7f8bfa61
+## These workload receipts explain metric anomalies and the failed model gain
+## gate in hw-thor; they do not change probe_inventory or the feature ladder.
+## Comments preserve the existing hardware-only registry schema. Validate the
+## external bytes separately; scripts/validate.py does not check these receipts.
+
+probe_inventory:
+  device:
+    name: "NVIDIA Thor"
+    cc: "11.0"
+    driver: "595.78"
+  tool:
+    nvcc: "13.2.86"
+    ncu: "2026.1.1"
+    cuda: "13.2"
+  source_tree: "../ (parent campaign of workspace/)"
+
+## Staged, author-prepared self-checking probe sources + exact commands +
+## expected outputs for the root to run on Thor. The sources are byte-identical
+## to the validated campaign harness (sha256 under each feature's artifacts).
+probe_manifest: probes/probe-manifest.yaml
+
+features:
+  # Baseline: native target compilation + on-device check (exact equality) for
+  # the supplied three-target build sm_110 / sm_110a / sm_110f.
+  - id: thor-native-target
+    feature: native-target
+    targets: [sm_110, sm_110a, sm_110f]
+    evidence_status: executed
+    source_ids: [doc-nvidia-thor-targets, pr-flashinfer-1608]
+    device:
+      cc: "11.0"
+    tool:
+      nvcc: "13.2.86"
+    runtime_check: >-
+      Each compiled target binary passed `--mode check` with exact equality on
+      NVIDIA Thor (compute capability 11.0); __CUDA_ARCH__=1100 for every target
+      and __CUDA_ARCH_SPECIFIC__=1100 only for the sm_110a build. See
+      validation-check/manifest.json (status: passed).
+    artifacts:
+      - kind: source
+        name: harness/thor_probe.cu
+        sha256: 9791954036202eae55567dd248b66336ff3466e8416019d4aaf7cddfbd86ebcd
+      - kind: binary
+        name: probe-build-02/thor-probe-sm_110-lineinfo
+        sha256: 4556302f04ad6f618e470a7ee871f708cf4effdf21e7d759f8f66bb0201dd2e2
+      - kind: binary
+        name: probe-build-02/thor-probe-sm_110a-lineinfo
+        sha256: 4c6eea45c61076c134d6321260422c8aa24cad2160c448b8fa3b4af876c0541b
+      - kind: binary
+        name: probe-build-02/thor-probe-sm_110f-lineinfo
+        sha256: ab7393f5528d07fb44f832faaae601b6f488947463a1415bffdc1ef9c1bb97fe
+
+  # TMA: genuine cp.async.bulk.tensor.1d tensor-map copy+reduce. Correctness
+  # checked (exact FP32 equality vs the SIMT reference) and profiled with NCU.
+  - id: thor-tma-bulk-1d
+    feature: tma
+    targets: [sm_110]
+    evidence_status: profiled
+    source_ids: [doc-nvidia-thor-targets, pr-flashinfer-1608]
+    device:
+      cc: "11.0"
+    tool:
+      nvcc: "13.2.86"
+      ncu: "2026.1.1"
+    runtime_check: >-
+      Kernel thor_tma_copy_reduce (cp.async.bulk.tensor.1d tensor-map TMA)
+      produced exact FP32 equality against the thor_simt_copy_reduce reference
+      under `--mode check` on NVIDIA Thor (validation-check/manifest.json,
+      status: passed). Scope: 1-D bulk tensor copy + reduction only.
+    artifacts:
+      - kind: source
+        name: harness/thor_probe.cu
+        sha256: 9791954036202eae55567dd248b66336ff3466e8416019d4aaf7cddfbd86ebcd
+      - kind: binary
+        name: probe-build-02/thor-probe-sm_110-lineinfo
+        sha256: 4556302f04ad6f618e470a7ee871f708cf4effdf21e7d759f8f66bb0201dd2e2
+    ncu_records:
+      - report: validation-profile/probe-lineinfo.ncu-rep
+        sha256: 4e013885c997fc30752e72795f12570339d16c456ea7087e25982a1a07c08953
+        sections: [PmSampling, PmSampling_WarpStates]
+        kernels: [thor_simt_copy_reduce, thor_tma_copy_reduce]
+
+  # tcgen05 target gating (tcgen05.fence) is compile-only: the assembler accepts
+  # the sm_110a target gate, but no MMA was issued or executed. This receipt
+  # substantiates compile acceptance ONLY — never MMA/TMEM/NVFP4 execution.
+  - id: thor-tcgen05-fence-gate
+    feature: tcgen05
+    targets: [sm_110a]
+    evidence_status: compiled
+    source_ids: [doc-nvidia-thor-targets]
+    artifacts:
+      - kind: source
+        name: harness/tcgen05_target_gate.cu
+        sha256: 5e3d7ed86309cef8f4561e651ac6585c5e14ab027bf56dbcfac29f6de8abd1f4
+
+  # The feature matrix below stays narrow: documented, execution pending. Each
+  # carries a concrete missing check and no runtime/profiling receipts (AC-2.1).
+  - id: thor-tcgen05-mma
+    feature: tcgen05
+    targets: [sm_110a]
+    evidence_status: pending
+    source_ids: [doc-nvidia-thor-targets]
+    missing_check: >-
+      tcgen05.mma issue + result correctness on Thor not yet run; only the
+      tcgen05.fence target gate compiles (see thor-tcgen05-fence-gate). No MMA
+      execution evidence.
+
+  - id: thor-tmem
+    feature: tmem
+    targets: [sm_110a]
+    evidence_status: pending
+    source_ids: [doc-nvidia-thor-targets]
+    missing_check: >-
+      TMEM allocation / residency and tcgen05 TMEM operands not exercised on
+      Thor. No execution evidence.
+
+  - id: thor-nvfp4
+    feature: nvfp4
+    targets: [sm_110a]
+    evidence_status: pending
+    source_ids: [doc-nvidia-thor-targets, pr-sglang-18787]
+    missing_check: >-
+      NVFP4 (E2M1) correctness not validated on Thor; the sglang capability gate
+      expansion is not an NVFP4 correctness test.
+
+  - id: thor-clc
+    feature: clc
+    targets: [sm_110a]
+    evidence_status: pending
+    source_ids: [doc-nvidia-thor-targets]
+    missing_check: >-
+      Cluster Launch Control execution on Thor not run. No evidence.
+
+  - id: thor-2sm-cooperative
+    feature: 2sm-cooperative
+    targets: [sm_110a]
+    evidence_status: pending
+    source_ids: [doc-nvidia-thor-targets]
+    missing_check: >-
+      Two-CTA (cta_group::2) cooperative execution on Thor not run. No evidence.

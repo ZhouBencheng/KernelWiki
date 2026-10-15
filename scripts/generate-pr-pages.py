@@ -202,9 +202,22 @@ def generate_page(repo, pr_data, files, inclusion_reason, captured_at):
     merge_sha = (pr_data.get("merge_commit_sha") or "unknown")[:8]
     body = pr_data.get("body") or ""
 
-    # Determine architectures
-    archs = ["sm100"]
-    text = (title + " " + body).lower()
+    # Preserve explicit Thor evidence instead of labeling every page SM100.
+    text = (title + " " + body + " " + " ".join(files)).lower()
+    archs = []
+    for arch in ("sm110", "sm110a"):
+        target = arch.replace("sm", "(?:sm_?|compute_)")
+        if re.search(r"(?<![a-z0-9])" + target + r"(?![a-z0-9])", text):
+            archs.append(arch)
+    if re.search(r"(?<![a-z0-9])thor(?![a-z0-9])", text) and "sm110" not in archs:
+        archs.insert(0, "sm110")
+    # Keep the legacy default and Blackwell/B200 family classification, including
+    # mixed evidence. Neither Thor nor device CC 11.0 implies an sm110a target.
+    if not archs or re.search(
+        r"(?<![a-z0-9])(?:sm_?100a?|blackwell|b100|b200|gb200|gb300)(?![a-z0-9])",
+        text,
+    ):
+        archs.insert(0, "sm100")
     if "sm90" in text or "hopper" in text:
         archs.append("sm90")
 

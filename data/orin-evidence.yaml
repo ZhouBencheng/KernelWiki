@@ -1,0 +1,152 @@
+## Orin (sm_87) source / evidence registry.
+##
+## Validated by scripts/validate.py::validate_orin_evidence_registry, which shares
+## the structural seam (validate_evidence_registry) with the Thor registry. Two
+## kinds of record appear here:
+##
+##   - applicability: unsupported  — a documentation-only statement that this
+##     target cannot run the feature. It carries a scope + reason + resolvable
+##     source_ids and MUST NOT carry any positive evidence-ladder field
+##     (evidence_status / runtime_check / missing_check / artifacts / ncu_records);
+##     an empty list or explicit null still counts as present and is rejected.
+##
+##   - the evidence ladder (pending < compiled < executed < profiled) — used for
+##     features that ARE available, with the same hash-bearing receipt rules as
+##     the Thor registry. These are structural DECLARATIONS only; the bytes are
+##     established by root's strict receipt checker, not this CPU-only gate.
+##
+## Identity is read from the root device probe (evidence/device-probe-v1/
+## identity.stdout and native-capture.json: display_name "Orin", CC 8.7,
+## nvcc 12.6.85). Receipts are real sha256 digests of the immutable evidence
+## files; they are never edited here.
+
+probe_inventory:
+  device:
+    name: "Orin"
+    cc: "8.7"
+  tool:
+    nvcc: "12.6.85"
+  source_tree: "evidence/ (Orin controller root)"
+
+features:
+  # ---- Available on sm_87 (evidence ladder) --------------------------------
+  # Ordinary cp.async (LDGSTS) global->shared copy, executed with exact FP32
+  # correctness. Distinct from the Hopper bulk copy; no profiling claimed here.
+  - id: orin-cp-async
+    feature: cp-async
+    applicability: supported
+    targets: [sm_87]
+    evidence_status: executed
+    source_ids: [doc-nvidia-ampere-sm87-features, doc-nvidia-jetson-orin]
+    runtime_check: >-
+      Kernel orin_cp_async_copy_reduce (ordinary cp.async global->shared copy)
+      passed `--mode check` with finite exact FP32 equality on Orin (CC 8.7):
+      1048576 copied elements and 4096 block sums checked. See
+      evidence/device-probe-v1/correctness.stdout (status: passed).
+    artifacts:
+      - kind: execution-log
+        name: evidence/device-probe-v1/correctness.stdout
+        sha256: 0018bad75153dab107e5265fe2600c2c0d6507103554d67cad1d9c51bfd237c6
+      - kind: commands
+        name: evidence/device-probe-v1/commands.json
+        sha256: a47c07d8da9c87c90221fd5799470819713f8d4cad16a0d6c60f9974054b454e
+      # Binding receipt: ties the source, executable, command/check output and
+      # target into one checked build (closes the source->binary provenance edge).
+      - kind: receipt
+        name: evidence/device-probe-v1/receipt.json
+        sha256: 4d03a68ad56ea023ab7d420959763c8695a8eccb43738e58dce5a9f85d86ecef
+
+  # BF16 warp MMA (HMMA.16816.F32.BF16): executed with exact 256-output
+  # correctness at shape 16x16x16, BF16 operands with FP32 accumulate/output.
+  # `executed` is the chosen minimum claim here. An NCU report was collected, but
+  # its three sampled PCs establish no bottleneck, so this record makes no
+  # profiling-analysis claim and omits ncu_records by choice.
+  - id: orin-bf16-warp-mma
+    feature: mma
+    applicability: supported
+    targets: [sm_87]
+    evidence_status: executed
+    source_ids: [doc-nvidia-ampere-sm87-features, doc-nvidia-jetson-orin]
+    runtime_check: >-
+      Kernel orin_bf16_wmma_m16n16k16 passed `--mode check` with 256 outputs at
+      exact equality (tolerance 0) on Orin (CC 8.7): BF16 A/B operands, FP32
+      C/accumulator/D, grid [1,1,1], block [32,1,1]. Two static
+      HMMA.16816.F32.BF16 instructions in the named sm_87 function. See
+      evidence/bf16-mma-v2/check.stdout and sass.stdout. Bounded capability only:
+      no timing, bandwidth, M=1 efficiency, model arithmetic or speedup claim.
+    artifacts:
+      - kind: source
+        name: evidence/bf16-mma-v2/orin_bf16_mma_probe.cu
+        sha256: 155d63faf3f9e83cfb2b452110cfc622105a9103fc4ec0b57f4c34c95a5918de
+      - kind: execution-log
+        name: evidence/bf16-mma-v2/check.stdout
+        sha256: dffb9ad7aa837c159596fe2538952affd954004a23d1349421c777d8fad3b522
+      - kind: sass
+        name: evidence/bf16-mma-v2/sass.stdout
+        sha256: 0777ae8d32b74d58f833e2ba91357e5f0435b468babde8c99c4a73c2bad557fa
+      - kind: binary
+        name: evidence/bf16-mma-v2/orin_bf16_mma_probe
+        sha256: cb283e3c38251f403e4da666a0a191e02cec0b7eaa77da7f6ab3681d2050a00d
+      # Binding receipt: ties source, binary, check output and SASS to one build.
+      - kind: receipt
+        name: evidence/bf16-mma-v2/receipt.json
+        sha256: 6326f02b7e14b68b3f65c6568e7203d2ec2ff027a9742bc42bd38fc8eed6f530
+
+  # ---- Unsupported on sm_87 (documentation-only; no evidence ladder) --------
+  - id: orin-tma-unsupported
+    feature: tma
+    applicability: unsupported
+    targets: [sm_87]
+    scope: "TMA bulk copy (cp.async.bulk / cp.async.bulk.tensor tensor-map engine)"
+    reason: >-
+      The Tensor Memory Accelerator bulk-copy path is a Hopper sm_90 feature;
+      sm_87 has no tensor-map bulk-copy engine. Ordinary cp.async (see
+      orin-cp-async) is a different, supported instruction.
+    source_ids: [doc-nvidia-ampere-sm87-features]
+
+  - id: orin-wgmma-unsupported
+    feature: wgmma
+    applicability: unsupported
+    targets: [sm_87]
+    scope: "wgmma.mma_async warpgroup asynchronous MMA"
+    reason: >-
+      WGMMA requires the architecture-specific Hopper target sm_90a (per the PTX
+      Target ISA Notes); it is unavailable on sm_87.
+    source_ids: [doc-nvidia-ampere-sm87-features]
+
+  - id: orin-tcgen05-unsupported
+    feature: tcgen05
+    applicability: unsupported
+    targets: [sm_87]
+    scope: "tcgen05 fifth-generation tensor-core MMA"
+    reason: >-
+      tcgen05 is a Blackwell sm_100 feature; it is unavailable on sm_87.
+    source_ids: [doc-nvidia-ampere-sm87-features]
+
+  - id: orin-tmem-unsupported
+    feature: tmem
+    applicability: unsupported
+    targets: [sm_87]
+    scope: "tensor memory (TMEM)"
+    reason: >-
+      TMEM is a Blackwell sm_100 feature; it is unavailable on sm_87.
+    source_ids: [doc-nvidia-ampere-sm87-features]
+
+  - id: orin-clc-unsupported
+    feature: clc
+    applicability: unsupported
+    targets: [sm_87]
+    scope: "cluster launch control (CLC)"
+    reason: >-
+      Cluster launch control is a Blackwell sm_100 feature (thread-block clusters
+      themselves are sm_90+); it is unavailable on sm_87.
+    source_ids: [doc-nvidia-ampere-sm87-features]
+
+  - id: orin-nvfp4-unsupported
+    feature: nvfp4
+    applicability: unsupported
+    targets: [sm_87]
+    scope: "native NVFP4 (E2M1) tensor-core path with block scaling"
+    reason: >-
+      Native NVFP4 is a Blackwell sm_100 feature; it is unavailable on sm_87.
+    source_ids: [doc-nvidia-ampere-sm87-features]

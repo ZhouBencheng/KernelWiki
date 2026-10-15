@@ -115,6 +115,15 @@ __device__ void tmem_dealloc(uint32_t tmem_addr, uint32_t num_cols) {
 
 ### Lifecycle in a Persistent GEMM Kernel
 
+The snippets below are **conceptual** and lean on named helpers. In particular
+`wait_mma_via_mbarrier(mbar)` is a placeholder for the completion contract: the
+issuing thread must have committed the preceding `tcgen05.mma`(s) to `mbar` (one
+completion arrival per `tcgen05.commit`, which can track multiple preceding MMA
+operations; pinned PTX ISA §9.7.16.12.1), and the helper waits that mbarrier's
+matching phase so the accumulator is complete before any read. It is not a
+compilable primitive and is not Thor-runtime-tested; see "Completion and Fences"
+in [`tcgen05-mma.md`](tcgen05-mma.md).
+
 ```cuda
 __global__ void persistent_gemm_kernel(/* ... */) {
     // 1. Allocate TMEM for accumulators
@@ -129,9 +138,12 @@ __global__ void persistent_gemm_kernel(/* ... */) {
             issue_tcgen05_mma(tmem_acc, smem_a[k], smem_b[k]);
         }
 
-        // 4. Fence and read results
-        asm volatile("tcgen05.mma.fence::before_thread_sync;");
+        // 4. Wait for MMA completion FIRST via an explicit mbarrier wait — the
+        //    fence does NOT wait — then order across the sync before reading.
+        wait_mma_via_mbarrier(mbar);
+        asm volatile("tcgen05.fence::before_thread_sync;");
         __syncthreads();
+        asm volatile("tcgen05.fence::after_thread_sync;");
 
         // 5. Epilogue: read from TMEM, apply bias/activation, write to GMEM
         epilogue_from_tmem(tmem_acc, output);
@@ -241,8 +253,12 @@ __global__ void double_buffered_gemm(/* ... */) {
         for (int k = 0; k < K_tiles; ++k) {
             issue_tcgen05_mma(tmem_acc[buf], smem_a[k], smem_b[k]);
         }
-        asm volatile("tcgen05.mma.fence::before_thread_sync;");
+        // Explicit mbarrier wait for MMA completion (the fence does not wait),
+        // then order across the sync before the epilogue reads TMEM.
+        wait_mma_via_mbarrier(mbar[buf]);
+        asm volatile("tcgen05.fence::before_thread_sync;");
         __syncthreads();
+        asm volatile("tcgen05.fence::after_thread_sync;");
 
         // If not the first tile, the *other* buffer's epilogue
         // was overlapped with this tile's MMA in the pipeline.
@@ -311,7 +327,7 @@ result = tmem_load(acc)
 
 ## Common Pitfalls
 
-1. **Forgetting to fence**: Reading TMEM without `tcgen05.mma.fence::before_thread_sync` produces undefined (stale) values.
+1. **Confusing the fence with a completion wait**: `tcgen05.fence::before_thread_sync` (note: `tcgen05.fence`, not `tcgen05.mma.fence`) only *orders* tcgen05 operations around a thread sync. It does **not** wait for the async MMA to finish — reading TMEM without first waiting for MMA completion (commit to an mbarrier, then wait) produces undefined (stale) values.
 2. **Forgetting to deallocate**: In persistent kernels, TMEM must be freed before re-acquiring tiles. Otherwise, the next allocation will fail or hang.
 3. **Exceeding 512 columns**: Attempting to allocate more than the SM's total column budget silently corrupts data or causes a hang.
 4. **Cross-warp reads**: A thread can only directly read/write TMEM rows mapped to its own lane. Accessing another warp's rows requires explicit shuffle or SMEM staging.

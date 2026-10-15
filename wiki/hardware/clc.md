@@ -60,6 +60,13 @@ CLC maintains a hardware-managed work queue. Each entry represents a tile coordi
 
 ### CLC Programming Model
 
+This is **conceptual** pseudocode built from named helpers. `wait_mma_via_mbarrier(mbar)`
+stands for the completion contract: the issuing thread must have committed the
+preceding `tcgen05.mma`(s) to `mbar`, and the helper waits that mbarrier's matching
+phase so the accumulator is complete before the epilogue reads it. It is not a
+compilable primitive nor Thor-runtime-tested; see "Completion and Fences" in
+[`tcgen05-mma.md`](tcgen05-mma.md).
+
 ```cuda
 __global__ void persistent_gemm_clc(
     const half* A, const half* B, half* C,
@@ -119,9 +126,12 @@ __global__ void persistent_gemm_clc(
             }
         }
 
-        // Epilogue
-        asm volatile("tcgen05.mma.fence::before_thread_sync;");
+        // Epilogue: explicit mbarrier wait for MMA completion FIRST (the fence
+        // does not wait), then order across the sync before reading TMEM.
+        wait_mma_via_mbarrier(mbar);
+        asm volatile("tcgen05.fence::before_thread_sync;");
         __syncthreads();
+        asm volatile("tcgen05.fence::after_thread_sync;");
         store_output(tmem_acc, C, tile_m, tile_n);
     }
 
