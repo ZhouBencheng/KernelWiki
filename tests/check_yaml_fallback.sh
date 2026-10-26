@@ -16,7 +16,7 @@ from _yaml_compat import USING_BUNDLED, yaml
 
 assert USING_BUNDLED, "fallback test unexpectedly imported host PyYAML"
 
-frontmatter = Path("wiki/kernels/flash-attention-4.md").read_text(encoding="utf-8")
+frontmatter = Path("wiki/architectures/sm100/flash-attention-4.md").read_text(encoding="utf-8")
 match = re.match(r"^---\s*\n(.*?)\n---", frontmatter, re.S)
 data = yaml.safe_load(match.group(1))
 assert data["id"] == "kernel-flash-attention-4"

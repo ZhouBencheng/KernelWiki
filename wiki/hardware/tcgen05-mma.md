@@ -1,49 +1,47 @@
 ---
 id: hw-tcgen05-mma
-title: "tcgen05.mma — Fifth-Generation Tensor Core MMA"
+title: "tcgen05: shared execution contract"
 type: hardware
-architectures: [sm100, sm100a]
+architectures: [sm100, sm100a, sm103, sm110]
+applicable_to: [sm100, sm103, sm110]
 tags: [tcgen05, tmem, mbarrier]
 confidence: source-reported
-related: [hw-tmem, hw-2sm-cooperative, technique-warp-specialization]
-sources: [doc-ptx-isa-sm100, doc-cutlass-cute-dsl, blog-tcgen05-tutorial, blog-colfax-cutlass]
+related: [hw-tmem, hw-sm100-tcgen05-mma, technique-pipeline-stages]
+sources: [doc-nvidia-blackwell-shared-instructions, doc-ptx-isa-sm100]
 aliases: [UMMA, tcgen05, "tensor core gen 05"]
 ---
 
-# tcgen05.mma
+# tcgen05: shared execution contract
 
-`tcgen05.mma` starts an asynchronous fifth-generation Tensor Core matrix multiply-accumulate. Its operation is `D = A × B + D`; an input predicate can instead select `D = A × B`.
+A supported `tcgen05.mma` operation starts an asynchronous matrix multiply
+with its accumulator in TMEM. Its issuing-thread model differs from collective
+warp `mma.sync` and warpgroup `wgmma`. Allocation, loads and stores have their
+own collective participation requirements; single-thread MMA issue does not
+make all TMEM operations single-threaded.
 
-## Operand and issue model
+## Select an operation, not just a family name
 
-| Matrix | Permitted storage |
-| --- | --- |
-| A | Shared memory descriptor or TMEM address |
-| B | Shared memory descriptor |
-| D / accumulator | TMEM address |
+SM100, SM103 and SM110 have applicable tcgen05 target variants, but `kind`,
+shape, sparsity, block scaling, CTA group and optional operands each constrain
+legality. Select the exact PTX form and compiler feature target from its Target
+ISA Notes. Runtime CC alone does not choose `a` or `f`. This route does not
+apply to RTX 4090, Orin or SM120.
 
-For `cta_group::1`, one thread in the CTA issues the whole MMA. For `cta_group::2`, one thread from the CTA pair issues it while the peer CTA is active. This single-thread issue rule is specific to MMA-like operations; TMEM allocation, deallocation, loads, and stores have warp-collective rules.
+## Ownership and completion
 
-The 32-bit `idesc` operand is mandatory. It encodes matrix dimensions, exact types, sparsity, and other operation details; it is not an optional scale descriptor. A representative unscaled form is:
+- Construct operand layouts and descriptors that match the exact operation.
+- Make producer writes visible under the required memory/proxy ordering.
+- Issue the matrix operation and establish its documented completion path
+  before reading or reusing the accumulator or operands.
+- Synchronize cross-thread consumers separately from instruction completion.
+- Release allocated TMEM before exit, respecting collective lifetimes.
 
-```ptx
-tcgen05.mma.cta_group::1.kind::f16
-    [d_tmem], a_desc, b_desc, idesc, enable_input_d;
-tcgen05.commit.cta_group::1.mbarrier::arrive::one.b64 [mma_done];
-```
+Do not assume that arbitrary neighboring asynchronous operations are ordered.
+The PTX pipelined-pairing rules and fences must match the actual sequence.
+A successful ordinary warp-MMA probe does not validate this execution path.
 
-The commit instruction provides an mbarrier-based completion path for earlier asynchronous `tcgen05.mma` operations issued by the same thread.
-
-## Instruction kinds
-
-The PTX ISA lists unscaled kinds `f16`, `tf32`, `f8f6f4`, and `i8`. Block-scaled forms use `mxf8f6f4`, `mxf4`, or `mxf4nvf4` with the `.block_scale` syntax and explicit TMEM scale-factor matrices. There is no standalone `kind::mxf8`. `mxf4nvf4` denotes support for MXFP4 and NVIDIA’s scaled 4-bit format; it does not prescribe MXFP4 for one operand and NVFP4 for the other.
-
-## Shared-memory layouts
-
-Matrix descriptors describe both addressing and swizzling. Supported layouts include non-swizzled and several swizzled forms, subject to each instruction’s shape and alignment constraints. Correctness requires the descriptor to match the physical shared-memory layout; 128-byte swizzling is a common high-throughput choice, not a universal requirement.
-
-Exact shapes, packing, scale-vector sizes, sparse forms, and architecture targets vary by instruction kind and PTX version. Consult the PTX tables instead of extrapolating a single GEMM configuration.
-
-## Performance evidence
-
-The separate [tcgen05 tutorial source page](../../sources/blogs/tcgen05-tutorial.md) records one author’s staged B200 GEMM results. Those numbers characterize that implementation and benchmark, not the instruction in general.
+The [SM100 instruction reference](../architectures/sm100/tcgen05-mma.md)
+preserves the original examples, descriptor details and B200 source references.
+Load it with the SM100 route or explicitly as comparison material. Thor kernels
+need their own target-specific build, correctness and resource checks; this
+shared contract carries no new tcgen05 runtime or performance claim.

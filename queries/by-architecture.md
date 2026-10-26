@@ -512,8 +512,11 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [CUTLASS CuTe DSL Documentation](../sources/docs/cutlass-cute-dsl.md) | `sources/docs/cutlass-cute-dsl.md` |
 | [FlashAttention-4: Algorithm and Kernel Pipelining Co-Design for Asymmetric Hardware Scaling](../sources/docs/flash-attention-4.md) | `sources/docs/flash-attention-4.md` |
 | [K-Search: LLM Kernel Generation via Co-Evolving Intrinsic World Model](../sources/docs/k-search-kernel-generation.md) | `sources/docs/k-search-kernel-generation.md` |
+| [PTX tcgen05 and TMEM target contracts](../sources/docs/nvidia-blackwell-shared-instructions.md) | `sources/docs/nvidia-blackwell-shared-instructions.md` |
 | [NVIDIA Blackwell Tuning Guide](../sources/docs/nvidia-blackwell-tuning-guide.md) | `sources/docs/nvidia-blackwell-tuning-guide.md` |
 | [NVIDIA CUTLASS Blackwell support map](../sources/docs/nvidia-cutlass-blackwell.md) | `sources/docs/nvidia-cutlass-blackwell.md` |
+| [CUDA feature-set compiler targets](../sources/docs/nvidia-feature-targets.md) | `sources/docs/nvidia-feature-targets.md` |
+| [NVIDIA GPU compute capability mappings](../sources/docs/nvidia-gpu-targets.md) | `sources/docs/nvidia-gpu-targets.md` |
 | [PTX ISA Fifth-Generation Tensor Core and CLC Reference](../sources/docs/nvidia-ptx-isa-sm100.md) | `sources/docs/nvidia-ptx-isa-sm100.md` |
 | [Triton 3.6 Release Notes — Blackwell Backend Work](../sources/docs/triton-3.6-blackwell.md) | `sources/docs/triton-3.6-blackwell.md` |
 | [Fix multicast bug and optimize masked GEMM](../sources/prs/DeepGEMM/PR-193.md) | `sources/prs/DeepGEMM/PR-193.md` |
@@ -814,47 +817,57 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [[Perf] Batch invariance with Cutlass fp8 support, 28.9% E2E latency improvement](../sources/prs/vllm/PR-40408.md) | `sources/prs/vllm/PR-40408.md` |
 | [[DSv4] Improved fused Indexer Q quant kernel](../sources/prs/vllm/PR-41428.md) | `sources/prs/vllm/PR-41428.md` |
 | [[DSv4] Improved dequant gather K cache kernel](../sources/prs/vllm/PR-42236.md) | `sources/prs/vllm/PR-42236.md` |
-| [Two-CTA Cooperative MMA](../wiki/hardware/2sm-cooperative.md) | `wiki/hardware/2sm-cooperative.md` |
+| [Two-CTA Cooperative MMA](../wiki/architectures/sm100/2sm-cooperative.md) | `wiki/architectures/sm100/2sm-cooperative.md` |
+| [SM100 implementation: explicit attention cache operation](../wiki/architectures/sm100/cache-policy.md) | `wiki/architectures/sm100/cache-policy.md` |
+| [CCCL CUB SM100 Scan Tuning](../wiki/architectures/sm100/cccl-memory-primitives.md) | `wiki/architectures/sm100/cccl-memory-primitives.md` |
+| [CUDA C++ for Blackwell Kernels](../wiki/architectures/sm100/cuda-cpp.md) | `wiki/architectures/sm100/cuda-cpp.md` |
+| [CuTe DSL for Blackwell](../wiki/architectures/sm100/cute-dsl.md) | `wiki/architectures/sm100/cute-dsl.md` |
+| [SM100 implementation: DeepGEMM block-scaled GEMM](../wiki/architectures/sm100/deepgemm.md) | `wiki/architectures/sm100/deepgemm.md` |
+| [SM100 implementation: Double and multi-buffering](../wiki/architectures/sm100/double-buffering.md) | `wiki/architectures/sm100/double-buffering.md` |
+| [SM100 implementation: Epilogue fusion](../wiki/architectures/sm100/epilogue-fusion.md) | `wiki/architectures/sm100/epilogue-fusion.md` |
+| [SM100 implementation: packed block-scale descriptors](../wiki/architectures/sm100/fine-grained-quantization.md) | `wiki/architectures/sm100/fine-grained-quantization.md` |
+| [FlashAttention-4](../wiki/architectures/sm100/flash-attention-4.md) | `wiki/architectures/sm100/flash-attention-4.md` |
+| [FlashAttention SM100 MLA TopK Sparse Forward](../wiki/architectures/sm100/flash-attention-sm100-mla-topk.md) | `wiki/architectures/sm100/flash-attention-sm100-mla-topk.md` |
+| [SM100 implementation: FP8 block-scale GEMM](../wiki/architectures/sm100/fp8-block-scale-gemm.md) | `wiki/architectures/sm100/fp8-block-scale-gemm.md` |
+| [SM100 implementation: fused shared-expert projection](../wiki/architectures/sm100/fused-moe.md) | `wiki/architectures/sm100/fused-moe.md` |
+| [SM100 implementation: gated NVFP4 GEMM with SwiGLU](../wiki/architectures/sm100/gated-dual-gemm.md) | `wiki/architectures/sm100/gated-dual-gemm.md` |
+| [Blackwell / B200 and GB200: target guidance](../wiki/architectures/sm100/index.md) | `wiki/architectures/sm100/index.md` |
+| [SM100 implementation: Kernel fusion](../wiki/architectures/sm100/kernel-fusion.md) | `wiki/architectures/sm100/kernel-fusion.md` |
+| [NVFP4 GEMM](../wiki/architectures/sm100/nvfp4-gemm.md) | `wiki/architectures/sm100/nvfp4-gemm.md` |
+| [NVFP4 batched GEMV](../wiki/architectures/sm100/nvfp4-gemv.md) | `wiki/architectures/sm100/nvfp4-gemv.md` |
+| [NVFP4 and block-scaled narrow precision](../wiki/architectures/sm100/nvfp4.md) | `wiki/architectures/sm100/nvfp4.md` |
+| [SM100 diagnosis: compute path below roofline](../wiki/architectures/sm100/pattern-compute-bound.md) | `wiki/architectures/sm100/pattern-compute-bound.md` |
+| [SM100 diagnosis: low SM utilization](../wiki/architectures/sm100/pattern-low-sm-utilization.md) | `wiki/architectures/sm100/pattern-low-sm-utilization.md` |
+| [SM100 diagnosis: memory-bound kernels](../wiki/architectures/sm100/pattern-memory-bound.md) | `wiki/architectures/sm100/pattern-memory-bound.md` |
+| [SM100 diagnosis: MoE expert load imbalance](../wiki/architectures/sm100/pattern-moe-load-imbalance.md) | `wiki/architectures/sm100/pattern-moe-load-imbalance.md` |
+| [SM100 diagnosis: TMA and tcgen05 pipeline stalls](../wiki/architectures/sm100/pattern-pipeline-stalls.md) | `wiki/architectures/sm100/pattern-pipeline-stalls.md` |
+| [SM100 diagnosis: register pressure and TMEM](../wiki/architectures/sm100/pattern-register-pressure.md) | `wiki/architectures/sm100/pattern-register-pressure.md` |
+| [SM100 example: B200 last-wave underutilization](../wiki/architectures/sm100/pattern-tail-effect.md) | `wiki/architectures/sm100/pattern-tail-effect.md` |
+| [SM100 implementation: Persistent kernels and work scheduling](../wiki/architectures/sm100/persistent-kernels.md) | `wiki/architectures/sm100/persistent-kernels.md` |
+| [Ping-Pong Scheduling](../wiki/architectures/sm100/ping-pong-scheduling.md) | `wiki/architectures/sm100/ping-pong-scheduling.md` |
+| [SM100 implementation: Software pipelining and stage ownership](../wiki/architectures/sm100/pipeline-stages.md) | `wiki/architectures/sm100/pipeline-stages.md` |
+| [PTX for SM100](../wiki/architectures/sm100/ptx.md) | `wiki/architectures/sm100/ptx.md` |
+| [SM100 implementation: register-cap experiment](../wiki/architectures/sm100/register-budgeting.md) | `wiki/architectures/sm100/register-budgeting.md` |
+| [Software-Emulated Exponential](../wiki/architectures/sm100/software-exp.md) | `wiki/architectures/sm100/software-exp.md` |
+| [SM100 implementation: CuTe shared-memory swizzle coupling](../wiki/architectures/sm100/swizzling.md) | `wiki/architectures/sm100/swizzling.md` |
+| [SM100 tcgen05-mma: original instruction and resource reference](../wiki/architectures/sm100/tcgen05-mma.md) | `wiki/architectures/sm100/tcgen05-mma.md` |
+| [TensorRT-LLM Blackwell FP4 DSA Indexer](../wiki/architectures/sm100/tensorrt-llm-blackwell-indexer.md) | `wiki/architectures/sm100/tensorrt-llm-blackwell-indexer.md` |
+| [SM100 tmem: original instruction and resource reference](../wiki/architectures/sm100/tmem.md) | `wiki/architectures/sm100/tmem.md` |
+| [SM100 implementation: Triton 3.6 Blackwell backend](../wiki/architectures/sm100/triton.md) | `wiki/architectures/sm100/triton.md` |
+| [SM100 implementation: tcgen05 warp specialization](../wiki/architectures/sm100/warp-specialization.md) | `wiki/architectures/sm100/warp-specialization.md` |
+| [Gated Delta Network kernels](../wiki/architectures/sm90/gated-delta-net.md) | `wiki/architectures/sm90/gated-delta-net.md` |
 | [Cluster Launch Control (CLC)](../wiki/hardware/clc.md) | `wiki/hardware/clc.md` |
 | [mbarrier (Memory Barrier Primitives)](../wiki/hardware/mbarrier.md) | `wiki/hardware/mbarrier.md` |
-| [NVFP4 and block-scaled narrow precision](../wiki/hardware/nvfp4.md) | `wiki/hardware/nvfp4.md` |
 | [Programmatic Dependent Launch / Grid Dependency Control](../wiki/hardware/pdl-gdc.md) | `wiki/hardware/pdl-gdc.md` |
-| [tcgen05.mma — Fifth-Generation Tensor Core MMA](../wiki/hardware/tcgen05-mma.md) | `wiki/hardware/tcgen05-mma.md` |
+| [tcgen05: shared execution contract](../wiki/hardware/tcgen05-mma.md) | `wiki/hardware/tcgen05-mma.md` |
 | [Tensor Memory Accelerator (TMA)](../wiki/hardware/tma.md) | `wiki/hardware/tma.md` |
-| [Tensor Memory (TMEM)](../wiki/hardware/tmem.md) | `wiki/hardware/tmem.md` |
+| [Tensor Memory: shared ownership and lifetime contract](../wiki/hardware/tmem.md) | `wiki/hardware/tmem.md` |
 | [DeepGEMM — runtime-JIT tensor-core kernels](../wiki/kernels/deepgemm.md) | `wiki/kernels/deepgemm.md` |
-| [FlashAttention-4](../wiki/kernels/flash-attention-4.md) | `wiki/kernels/flash-attention-4.md` |
-| [FlashAttention SM100 MLA TopK Sparse Forward](../wiki/kernels/flash-attention-sm100-mla-topk.md) | `wiki/kernels/flash-attention-sm100-mla-topk.md` |
 | [FlashMLA attention kernels](../wiki/kernels/flashmla.md) | `wiki/kernels/flashmla.md` |
 | [FP8 block-scale GEMM](../wiki/kernels/fp8-block-scale-gemm.md) | `wiki/kernels/fp8-block-scale-gemm.md` |
-| [Fused MoE — Expert GEMM and Adjacent Operations](../wiki/kernels/fused-moe.md) | `wiki/kernels/fused-moe.md` |
-| [Gated Delta Network kernels](../wiki/kernels/gated-delta-net.md) | `wiki/kernels/gated-delta-net.md` |
-| [Gated Dual GEMM (Gate-Up + Activation)](../wiki/kernels/gated-dual-gemm.md) | `wiki/kernels/gated-dual-gemm.md` |
 | [Grouped GEMM for MoE](../wiki/kernels/grouped-gemm.md) | `wiki/kernels/grouped-gemm.md` |
-| [NVFP4 GEMM](../wiki/kernels/nvfp4-gemm.md) | `wiki/kernels/nvfp4-gemm.md` |
-| [NVFP4 batched GEMV](../wiki/kernels/nvfp4-gemv.md) | `wiki/kernels/nvfp4-gemv.md` |
 | [Sparse MLA](../wiki/kernels/sparse-mla.md) | `wiki/kernels/sparse-mla.md` |
-| [TensorRT-LLM Blackwell FP4 DSA Indexer](../wiki/kernels/tensorrt-llm-blackwell-indexer.md) | `wiki/kernels/tensorrt-llm-blackwell-indexer.md` |
-| [CUDA C++ for Blackwell Kernels](../wiki/languages/cuda-cpp.md) | `wiki/languages/cuda-cpp.md` |
-| [CuTe DSL for Blackwell](../wiki/languages/cute-dsl.md) | `wiki/languages/cute-dsl.md` |
-| [PTX for SM100](../wiki/languages/ptx-sm100.md) | `wiki/languages/ptx-sm100.md` |
-| [Triton on Blackwell](../wiki/languages/triton-blackwell.md) | `wiki/languages/triton-blackwell.md` |
-| [PTX Cache Policy Differentiation](../wiki/techniques/cache-policy.md) | `wiki/techniques/cache-policy.md` |
-| [CCCL CUB SM100 Scan Tuning](../wiki/techniques/cccl-memory-primitives.md) | `wiki/techniques/cccl-memory-primitives.md` |
-| [Double/Multi-Buffering Patterns](../wiki/techniques/double-buffering.md) | `wiki/techniques/double-buffering.md` |
-| [Epilogue fusion](../wiki/techniques/epilogue-fusion.md) | `wiki/techniques/epilogue-fusion.md` |
 | [External Source-Map Research For Kernel Edits](../wiki/techniques/external-source-map-research.md) | `wiki/techniques/external-source-map-research.md` |
-| [Fine-grained FP8/FP4 scaling](../wiki/techniques/fine-grained-quantization.md) | `wiki/techniques/fine-grained-quantization.md` |
-| [Kernel fusion](../wiki/techniques/kernel-fusion.md) | `wiki/techniques/kernel-fusion.md` |
-| [Persistent Kernels with Cluster Launch Control](../wiki/techniques/persistent-kernels.md) | `wiki/techniques/persistent-kernels.md` |
-| [Ping-Pong Scheduling](../wiki/techniques/ping-pong-scheduling.md) | `wiki/techniques/ping-pong-scheduling.md` |
-| [Software Pipelining and Multi-Stage Buffering](../wiki/techniques/pipeline-stages.md) | `wiki/techniques/pipeline-stages.md` |
-| [Register budgeting](../wiki/techniques/register-budgeting.md) | `wiki/techniques/register-budgeting.md` |
-| [Software-Emulated Exponential](../wiki/techniques/software-exp.md) | `wiki/techniques/software-exp.md` |
-| [Shared Memory Swizzling](../wiki/techniques/swizzling.md) | `wiki/techniques/swizzling.md` |
-| [Tile Scheduling Strategies](../wiki/techniques/tile-scheduling.md) | `wiki/techniques/tile-scheduling.md` |
-| [Wide Vectorized Loads and Cache Policies](../wiki/techniques/vectorized-loads.md) | `wiki/techniques/vectorized-loads.md` |
-| [Warp Specialization on Hopper and Blackwell](../wiki/techniques/warp-specialization.md) | `wiki/techniques/warp-specialization.md` |
 
 ### `sm100a`
 
@@ -910,17 +923,18 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [[NVIDA] [1/N] Nvfp4 Masked Gemm: Add quant op for the flashinfer grouped gemm](../sources/prs/sglang/PR-9200.md) | `sources/prs/sglang/PR-9200.md` |
 | [Make fp4_quantize kernels work on sm103](../sources/prs/sglang/PR-9807.md) | `sources/prs/sglang/PR-9807.md` |
 | [[NVIDIA] Support nvfp4 quantization](../sources/prs/vllm/PR-12784.md) | `sources/prs/vllm/PR-12784.md` |
-| [Two-CTA Cooperative MMA](../wiki/hardware/2sm-cooperative.md) | `wiki/hardware/2sm-cooperative.md` |
+| [Two-CTA Cooperative MMA](../wiki/architectures/sm100/2sm-cooperative.md) | `wiki/architectures/sm100/2sm-cooperative.md` |
+| [CUDA C++ for Blackwell Kernels](../wiki/architectures/sm100/cuda-cpp.md) | `wiki/architectures/sm100/cuda-cpp.md` |
+| [CuTe DSL for Blackwell](../wiki/architectures/sm100/cute-dsl.md) | `wiki/architectures/sm100/cute-dsl.md` |
+| [NVFP4 GEMM](../wiki/architectures/sm100/nvfp4-gemm.md) | `wiki/architectures/sm100/nvfp4-gemm.md` |
+| [NVFP4 and block-scaled narrow precision](../wiki/architectures/sm100/nvfp4.md) | `wiki/architectures/sm100/nvfp4.md` |
+| [PTX for SM100](../wiki/architectures/sm100/ptx.md) | `wiki/architectures/sm100/ptx.md` |
+| [SM100 tcgen05-mma: original instruction and resource reference](../wiki/architectures/sm100/tcgen05-mma.md) | `wiki/architectures/sm100/tcgen05-mma.md` |
+| [SM100 tmem: original instruction and resource reference](../wiki/architectures/sm100/tmem.md) | `wiki/architectures/sm100/tmem.md` |
 | [mbarrier (Memory Barrier Primitives)](../wiki/hardware/mbarrier.md) | `wiki/hardware/mbarrier.md` |
-| [NVFP4 and block-scaled narrow precision](../wiki/hardware/nvfp4.md) | `wiki/hardware/nvfp4.md` |
-| [tcgen05.mma — Fifth-Generation Tensor Core MMA](../wiki/hardware/tcgen05-mma.md) | `wiki/hardware/tcgen05-mma.md` |
+| [tcgen05: shared execution contract](../wiki/hardware/tcgen05-mma.md) | `wiki/hardware/tcgen05-mma.md` |
 | [Tensor Memory Accelerator (TMA)](../wiki/hardware/tma.md) | `wiki/hardware/tma.md` |
-| [Tensor Memory (TMEM)](../wiki/hardware/tmem.md) | `wiki/hardware/tmem.md` |
-| [Fused MoE — Expert GEMM and Adjacent Operations](../wiki/kernels/fused-moe.md) | `wiki/kernels/fused-moe.md` |
-| [NVFP4 GEMM](../wiki/kernels/nvfp4-gemm.md) | `wiki/kernels/nvfp4-gemm.md` |
-| [CUDA C++ for Blackwell Kernels](../wiki/languages/cuda-cpp.md) | `wiki/languages/cuda-cpp.md` |
-| [CuTe DSL for Blackwell](../wiki/languages/cute-dsl.md) | `wiki/languages/cute-dsl.md` |
-| [PTX for SM100](../wiki/languages/ptx-sm100.md) | `wiki/languages/ptx-sm100.md` |
+| [Tensor Memory: shared ownership and lifetime contract](../wiki/hardware/tmem.md) | `wiki/hardware/tmem.md` |
 
 ### `sm100f`
 
@@ -949,6 +963,9 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 
 | Page | Path |
 |------|------|
+| [PTX tcgen05 and TMEM target contracts](../sources/docs/nvidia-blackwell-shared-instructions.md) | `sources/docs/nvidia-blackwell-shared-instructions.md` |
+| [CUDA feature-set compiler targets](../sources/docs/nvidia-feature-targets.md) | `sources/docs/nvidia-feature-targets.md` |
+| [NVIDIA GPU compute capability mappings](../sources/docs/nvidia-gpu-targets.md) | `sources/docs/nvidia-gpu-targets.md` |
 | [PTX ISA Fifth-Generation Tensor Core and CLC Reference](../sources/docs/nvidia-ptx-isa-sm100.md) | `sources/docs/nvidia-ptx-isa-sm100.md` |
 | [Sync nv_dev with upstream #316 (Mega MoE optimizations & benchmarks)](../sources/prs/DeepGEMM/PR-328.md) | `sources/prs/DeepGEMM/PR-328.md` |
 | [[TRTLLM-9831][perf] Enable 2CTA with autotune for CuteDSL MoE and Grouped GEMM optimizations](../sources/prs/TensorRT-LLM/PR-10201.md) | `sources/prs/TensorRT-LLM/PR-10201.md` |
@@ -988,7 +1005,12 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [[Perf] FP8 FlashInfer Attn for ViT](../sources/prs/vllm/PR-38065.md) | `sources/prs/vllm/PR-38065.md` |
 | [[MLA] Optimize mla indexer prepare uniform decode for MTP > 1](../sources/prs/vllm/PR-39458.md) | `sources/prs/vllm/PR-39458.md` |
 | [[DSV4]   Fuse norm and router for low latency scenario](../sources/prs/vllm/PR-41263.md) | `sources/prs/vllm/PR-41263.md` |
+| [Blackwell / B300 and GB300: target guidance](../wiki/architectures/sm103/index.md) | `wiki/architectures/sm103/index.md` |
 | [Cluster Launch Control (CLC)](../wiki/hardware/clc.md) | `wiki/hardware/clc.md` |
+| [mbarrier (Memory Barrier Primitives)](../wiki/hardware/mbarrier.md) | `wiki/hardware/mbarrier.md` |
+| [tcgen05: shared execution contract](../wiki/hardware/tcgen05-mma.md) | `wiki/hardware/tcgen05-mma.md` |
+| [Tensor Memory Accelerator (TMA)](../wiki/hardware/tma.md) | `wiki/hardware/tma.md` |
+| [Tensor Memory: shared ownership and lifetime contract](../wiki/hardware/tmem.md) | `wiki/hardware/tmem.md` |
 
 ### `sm103a`
 
@@ -1011,12 +1033,22 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | Page | Path |
 |------|------|
 | [cuTile Python Documentation](../sources/docs/cutile-python-dsl.md) | `sources/docs/cutile-python-dsl.md` |
+| [PTX ordinary asynchronous copy and warp MMA target scope](../sources/docs/nvidia-ampere-ada-instructions.md) | `sources/docs/nvidia-ampere-ada-instructions.md` |
+| [PTX tcgen05 and TMEM target contracts](../sources/docs/nvidia-blackwell-shared-instructions.md) | `sources/docs/nvidia-blackwell-shared-instructions.md` |
+| [CUDA feature-set compiler targets](../sources/docs/nvidia-feature-targets.md) | `sources/docs/nvidia-feature-targets.md` |
+| [NVIDIA GPU compute capability mappings](../sources/docs/nvidia-gpu-targets.md) | `sources/docs/nvidia-gpu-targets.md` |
 | [PTX ISA Fifth-Generation Tensor Core and CLC Reference](../sources/docs/nvidia-ptx-isa-sm100.md) | `sources/docs/nvidia-ptx-isa-sm100.md` |
 | [feat: initial support for SM103, SM110, SM120, SM121](../sources/prs/flashinfer/PR-1608.md) | `sources/prs/flashinfer/PR-1608.md` |
 | [[NVIDIA] Thor & Spark Support](../sources/prs/flashinfer/PR-2028.md) | `sources/prs/flashinfer/PR-2028.md` |
 | [[NVIDIA] fix(jit): enable GDC for CUTLASS fused MoE PDL — prevent random crashes on SM12x](../sources/prs/flashinfer/PR-2913.md) | `sources/prs/flashinfer/PR-2913.md` |
 | [feat: DiT layer norm fusions for WAN: flashinfer.diffusion_ops](../sources/prs/flashinfer/PR-3157.md) | `sources/prs/flashinfer/PR-3157.md` |
+| [Jetson AGX Thor / Blackwell: target guidance](../wiki/architectures/sm110/index.md) | `wiki/architectures/sm110/index.md` |
+| [Ordinary async copy and warp MMA](../wiki/hardware/async-copy-warp-mma.md) | `wiki/hardware/async-copy-warp-mma.md` |
 | [Cluster Launch Control (CLC)](../wiki/hardware/clc.md) | `wiki/hardware/clc.md` |
+| [mbarrier (Memory Barrier Primitives)](../wiki/hardware/mbarrier.md) | `wiki/hardware/mbarrier.md` |
+| [tcgen05: shared execution contract](../wiki/hardware/tcgen05-mma.md) | `wiki/hardware/tcgen05-mma.md` |
+| [Tensor Memory Accelerator (TMA)](../wiki/hardware/tma.md) | `wiki/hardware/tma.md` |
+| [Tensor Memory: shared ownership and lifetime contract](../wiki/hardware/tmem.md) | `wiki/hardware/tmem.md` |
 
 ### `sm110a`
 
@@ -1037,6 +1069,8 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [cuTile Python Documentation](../sources/docs/cutile-python-dsl.md) | `sources/docs/cutile-python-dsl.md` |
 | [CUTLASS CuTe DSL Documentation](../sources/docs/cutlass-cute-dsl.md) | `sources/docs/cutlass-cute-dsl.md` |
 | [NVIDIA Blackwell Tuning Guide](../sources/docs/nvidia-blackwell-tuning-guide.md) | `sources/docs/nvidia-blackwell-tuning-guide.md` |
+| [CUDA feature-set compiler targets](../sources/docs/nvidia-feature-targets.md) | `sources/docs/nvidia-feature-targets.md` |
+| [NVIDIA GPU compute capability mappings](../sources/docs/nvidia-gpu-targets.md) | `sources/docs/nvidia-gpu-targets.md` |
 | [PTX ISA Fifth-Generation Tensor Core and CLC Reference](../sources/docs/nvidia-ptx-isa-sm100.md) | `sources/docs/nvidia-ptx-isa-sm100.md` |
 | [[https://nvbugs/5854860][fix] Fix cutedsl argmax on sm120](../sources/prs/TensorRT-LLM/PR-11181.md) | `sources/prs/TensorRT-LLM/PR-11181.md` |
 | [[None][feat] Fuse FP8 1x128 quantize + UE8M0 scale pack on SM100](../sources/prs/TensorRT-LLM/PR-13628.md) | `sources/prs/TensorRT-LLM/PR-13628.md` |
@@ -1266,12 +1300,19 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 
 | Page | Path |
 |------|------|
+| [PTX ordinary asynchronous copy and warp MMA target scope](../sources/docs/nvidia-ampere-ada-instructions.md) | `sources/docs/nvidia-ampere-ada-instructions.md` |
+| [NVIDIA GPU compute capability mappings](../sources/docs/nvidia-gpu-targets.md) | `sources/docs/nvidia-gpu-targets.md` |
 | [feat: integrate xqa attention backend](../sources/prs/flashinfer/PR-1503.md) | `sources/prs/flashinfer/PR-1503.md` |
+| [Jetson AGX Orin / Ampere: target guidance](../wiki/architectures/sm87/index.md) | `wiki/architectures/sm87/index.md` |
+| [Ordinary async copy and warp MMA](../wiki/hardware/async-copy-warp-mma.md) | `wiki/hardware/async-copy-warp-mma.md` |
 
 ### `sm89`
 
 | Page | Path |
 |------|------|
+| [NVIDIA Ada tuning guide](../sources/docs/nvidia-ada-tuning.md) | `sources/docs/nvidia-ada-tuning.md` |
+| [PTX ordinary asynchronous copy and warp MMA target scope](../sources/docs/nvidia-ampere-ada-instructions.md) | `sources/docs/nvidia-ampere-ada-instructions.md` |
+| [NVIDIA GPU compute capability mappings](../sources/docs/nvidia-gpu-targets.md) | `sources/docs/nvidia-gpu-targets.md` |
 | [[None][feat] GPT-OSS Sm120/Sm121 Support](../sources/prs/TensorRT-LLM/PR-7937.md) | `sources/prs/TensorRT-LLM/PR-7937.md` |
 | [simplify dispatch segmented reduce to use latest dispatch and new tunings API](../sources/prs/cccl/PR-8332.md) | `sources/prs/cccl/PR-8332.md` |
 | [support fp16 accmulator for sm89 fp8 mma](../sources/prs/cutlass/PR-2378.md) | `sources/prs/cutlass/PR-2378.md` |
@@ -1296,6 +1337,8 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [[Bugfix] Gate 256-bit instructions to CUDA 12.9+](../sources/prs/vllm/PR-34791.md) | `sources/prs/vllm/PR-34791.md` |
 | [[NVIDIA] Bugfix NVFP4 DGX Spark and RTX50](../sources/prs/vllm/PR-38423.md) | `sources/prs/vllm/PR-38423.md` |
 | [[Perf] Batch invariance with Cutlass fp8 support, 28.9% E2E latency improvement](../sources/prs/vllm/PR-40408.md) | `sources/prs/vllm/PR-40408.md` |
+| [GeForce RTX 4090 / Ada: target guidance](../wiki/architectures/sm89/index.md) | `wiki/architectures/sm89/index.md` |
+| [Ordinary async copy and warp MMA](../wiki/hardware/async-copy-warp-mma.md) | `wiki/hardware/async-copy-warp-mma.md` |
 
 ### `sm90`
 
@@ -1314,6 +1357,8 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [cuTile Python Documentation](../sources/docs/cutile-python-dsl.md) | `sources/docs/cutile-python-dsl.md` |
 | [CUTLASS CuTe DSL Documentation](../sources/docs/cutlass-cute-dsl.md) | `sources/docs/cutlass-cute-dsl.md` |
 | [K-Search: LLM Kernel Generation via Co-Evolving Intrinsic World Model](../sources/docs/k-search-kernel-generation.md) | `sources/docs/k-search-kernel-generation.md` |
+| [CUDA feature-set compiler targets](../sources/docs/nvidia-feature-targets.md) | `sources/docs/nvidia-feature-targets.md` |
+| [NVIDIA GPU compute capability mappings](../sources/docs/nvidia-gpu-targets.md) | `sources/docs/nvidia-gpu-targets.md` |
 | [Tiled Flash Linear Attention (TFLA)](../sources/docs/tfla.md) | `sources/docs/tfla.md` |
 | [Fix performance issue of m-grouped contiguous GEMMs.](../sources/prs/DeepGEMM/PR-168.md) | `sources/prs/DeepGEMM/PR-168.md` |
 | [Fix multicast bug and optimize masked GEMM](../sources/prs/DeepGEMM/PR-193.md) | `sources/prs/DeepGEMM/PR-193.md` |
@@ -1562,31 +1607,19 @@ Source-PR pages whose validated evidence review found no family-level or exact a
 | [[Perf] Batch invariance with Cutlass fp8 support, 28.9% E2E latency improvement](../sources/prs/vllm/PR-40408.md) | `sources/prs/vllm/PR-40408.md` |
 | [[Perf] Add do_not_specialize in fused FP8 RoPE kernel](../sources/prs/vllm/PR-42849.md) | `sources/prs/vllm/PR-42849.md` |
 | [[Kernel] (2/N) Machete - Integrate into CompressedTensorsWNA16 and GPTQMarlin](../sources/prs/vllm/PR-7701.md) | `sources/prs/vllm/PR-7701.md` |
+| [Chunk-Based Parallelism for Linear Recurrent Models](../wiki/architectures/sm90/chunk-parallelism.md) | `wiki/architectures/sm90/chunk-parallelism.md` |
+| [Gated Delta Network kernels](../wiki/architectures/sm90/gated-delta-net.md) | `wiki/architectures/sm90/gated-delta-net.md` |
+| [Hopper / H100 and H200: target guidance](../wiki/architectures/sm90/index.md) | `wiki/architectures/sm90/index.md` |
+| [Triton on Hopper](../wiki/architectures/sm90/triton.md) | `wiki/architectures/sm90/triton.md` |
 | [mbarrier (Memory Barrier Primitives)](../wiki/hardware/mbarrier.md) | `wiki/hardware/mbarrier.md` |
 | [Programmatic Dependent Launch / Grid Dependency Control](../wiki/hardware/pdl-gdc.md) | `wiki/hardware/pdl-gdc.md` |
 | [Tensor Memory Accelerator (TMA)](../wiki/hardware/tma.md) | `wiki/hardware/tma.md` |
 | [DeepGEMM — runtime-JIT tensor-core kernels](../wiki/kernels/deepgemm.md) | `wiki/kernels/deepgemm.md` |
 | [FlashMLA attention kernels](../wiki/kernels/flashmla.md) | `wiki/kernels/flashmla.md` |
 | [FP8 block-scale GEMM](../wiki/kernels/fp8-block-scale-gemm.md) | `wiki/kernels/fp8-block-scale-gemm.md` |
-| [Fused MoE — Expert GEMM and Adjacent Operations](../wiki/kernels/fused-moe.md) | `wiki/kernels/fused-moe.md` |
-| [Gated Delta Network kernels](../wiki/kernels/gated-delta-net.md) | `wiki/kernels/gated-delta-net.md` |
-| [Gated Dual GEMM (Gate-Up + Activation)](../wiki/kernels/gated-dual-gemm.md) | `wiki/kernels/gated-dual-gemm.md` |
 | [Grouped GEMM for MoE](../wiki/kernels/grouped-gemm.md) | `wiki/kernels/grouped-gemm.md` |
 | [Sparse MLA](../wiki/kernels/sparse-mla.md) | `wiki/kernels/sparse-mla.md` |
-| [Triton on Blackwell](../wiki/languages/triton-blackwell.md) | `wiki/languages/triton-blackwell.md` |
-| [PTX Cache Policy Differentiation](../wiki/techniques/cache-policy.md) | `wiki/techniques/cache-policy.md` |
-| [Chunk-Based Parallelism for Linear Recurrent Models](../wiki/techniques/chunk-parallelism.md) | `wiki/techniques/chunk-parallelism.md` |
-| [Double/Multi-Buffering Patterns](../wiki/techniques/double-buffering.md) | `wiki/techniques/double-buffering.md` |
-| [Epilogue fusion](../wiki/techniques/epilogue-fusion.md) | `wiki/techniques/epilogue-fusion.md` |
 | [External Source-Map Research For Kernel Edits](../wiki/techniques/external-source-map-research.md) | `wiki/techniques/external-source-map-research.md` |
-| [Fine-grained FP8/FP4 scaling](../wiki/techniques/fine-grained-quantization.md) | `wiki/techniques/fine-grained-quantization.md` |
-| [Kernel fusion](../wiki/techniques/kernel-fusion.md) | `wiki/techniques/kernel-fusion.md` |
-| [Software Pipelining and Multi-Stage Buffering](../wiki/techniques/pipeline-stages.md) | `wiki/techniques/pipeline-stages.md` |
-| [Register budgeting](../wiki/techniques/register-budgeting.md) | `wiki/techniques/register-budgeting.md` |
-| [Shared Memory Swizzling](../wiki/techniques/swizzling.md) | `wiki/techniques/swizzling.md` |
-| [Tile Scheduling Strategies](../wiki/techniques/tile-scheduling.md) | `wiki/techniques/tile-scheduling.md` |
-| [Wide Vectorized Loads and Cache Policies](../wiki/techniques/vectorized-loads.md) | `wiki/techniques/vectorized-loads.md` |
-| [Warp Specialization on Hopper and Blackwell](../wiki/techniques/warp-specialization.md) | `wiki/techniques/warp-specialization.md` |
 
 ### `sm90a`
 

@@ -2,13 +2,14 @@
 id: hw-tma
 title: "Tensor Memory Accelerator (TMA)"
 type: hardware
-architectures: [sm100, sm100a, sm90, sm90a]
+architectures: [sm90, sm90a, sm100, sm100a, sm103, sm110]
 tags: [tma, mbarrier]
 confidence: source-reported
 related: [hw-tcgen05-mma, technique-pipeline-stages, technique-swizzling]
 sources: [doc-ptx-isa-sm100, doc-nvidia-tuning-guide, doc-cutlass-cute-dsl]
 aliases: [TMA, "tensor memory accelerator", "cp.async.bulk"]
 blackwell_relevance: "Blackwell retains Hopper's descriptor-driven asynchronous tensor copies; descriptors and shared-memory layouts must agree when feeding tcgen05."
+applicable_to: [sm90, sm100, sm103, sm110]
 ---
 
 # Tensor Memory Accelerator (TMA)

@@ -1,39 +1,36 @@
 ---
 id: technique-kernel-fusion
-title: Kernel fusion
+title: "Kernel fusion"
 type: technique
-architectures: [sm100, sm90]
-tags: [kernel-fusion, fused-kernel, tmem]
+architectures: []
+applicable_to: [portable]
+tags: [kernel-fusion, fused-kernel]
 confidence: source-reported
-reproducibility: snippet
+reproducibility: concept
 prerequisites: []
-related: [kernel-fused-moe, kernel-nvfp4-gemm, technique-epilogue-fusion]
-sources: [contest-gpumode-p3, contest-flashinfer-track-a, blog-tflops-gap-fp4-moe, pr-TensorRT-LLM-11897]
-blackwell_relevance: TMEM can hold accumulator state for some fused SM100 designs, but the legal and profitable fusion boundary is kernel-specific.
+related: [technique-sm100-kernel-fusion]
+sources: [doc-cuda-portable-practices]
 ---
 
 # Kernel fusion
 
 Kernel fusion keeps producer/consumer operations within one launch to avoid
-materializing selected intermediates in global memory. It can reduce launch and
-traffic costs, but it may increase live state, registers, shared memory, TMEM,
-code size, and synchronization. A workload's operation graph—not a fixed
-number of kernels—defines the legal boundary.
+selected intermediate stores and launches. The legal boundary follows the
+operation graph, synchronization requirements and numerical contract.
 
-TensorRT-LLM PR 11897 provides a retained example: a Blackwell NVFP4 dense GEMM
-fused with SwiGLU. This contiguous call-site excerpt is the BF16-output path:
+Benefits compete with extra live state, registers, shared storage, code size
+and synchronization. Compare launch count, intermediate bytes, occupancy and
+end-to-end latency with the same inputs. A fused operation must preserve
+required dtype, accumulation, rounding and activation semantics; an FP4 recipe
+is not a same-precision replacement for a BF16 or FP32 operator.
 
-```python
-output = torch.ops.trtllm.cute_dsl_nvfp4_dense_gemm_swiglu_blackwell(
-    act_fp4, module.weight, act_sf, module.weight_scale, alpha,
-    module.dtype)
-```
+A particular accelerator storage model is not a prerequisite for fusion. The
+SM100 example contains an NVFP4 GEMM/SwiGLU call with its own shape and scaling
+contract; those details are not part of this portable principle.
 
-The source has separate contracts for shapes, alignment, input scales, and
-output type. It does not establish that routing, two expert GEMMs, activation,
-and combine should all be fused into one device kernel.
+## Select an implementation
 
-Evaluate fusion by holding numerics and workload constant, then measuring
-launch count, intermediate bytes, occupancy/resources, and end-to-end latency.
-The former local example was removed because `tmem_alloc` and `tcgen05_mma`
-were invented pseudo-APIs presented as CUDA.
+Read the selected architecture entry using `query.py --target <device>`.
+The [SM100 implementation](../architectures/sm100/kernel-fusion.md) preserves the
+original excerpts and performance evidence. Open it only for SM100 or an
+explicit cross-architecture comparison, not as a recipe for another device.

@@ -2,13 +2,14 @@
 id: hw-mbarrier
 title: "mbarrier (Memory Barrier Primitives)"
 type: hardware
-architectures: [sm100, sm100a, sm90, sm90a, sm80]
+architectures: [sm80, sm90, sm90a, sm100, sm100a, sm103, sm110]
 tags: [mbarrier, tma]
 confidence: source-reported
 related: [hw-tma, hw-tcgen05-mma, technique-warp-specialization, technique-pipeline-stages]
 sources: [doc-ptx-isa-sm100]
 aliases: [mbarrier, "memory barrier", "mbar"]
 blackwell_relevance: "Transaction-count mbarriers coordinate asynchronous TMA, CLC, and tcgen05 completion with consuming threads."
+applicable_to: [sm90, sm100, sm103, sm110]
 ---
 
 # mbarrier

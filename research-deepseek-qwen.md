@@ -6,8 +6,8 @@ The original scratch research mixed kernel evidence with cluster-level systems t
 
 - [DeepGEMM](wiki/kernels/deepgemm.md) and [FP8 block-scale GEMM](wiki/kernels/fp8-block-scale-gemm.md) retain only the repository's reported H800 throughput claim and identify its unspecified benchmark shape.
 - [FlashMLA](wiki/kernels/flashmla.md), [SparseMLA](wiki/kernels/sparse-mla.md), and [Native Sparse Attention](wiki/kernels/nsa.md) distinguish source-reported measurements from explanatory synthesis.
-- [Gated DeltaNet](wiki/kernels/gated-delta-net.md) describes the kernel-facing operator and links the official Qwen3-Next architecture source without repeating an unsupported throughput multiplier.
-- [FlashAttention-4](wiki/kernels/flash-attention-4.md) and the associated [paper source](sources/docs/flash-attention-4.md) use the paper's reported peak result and benchmark context.
+- [Gated DeltaNet](wiki/architectures/sm90/gated-delta-net.md) describes the retained H200 kernel-facing implementation evidence without repeating an unsupported throughput multiplier.
+- [FlashAttention-4](wiki/architectures/sm100/flash-attention-4.md) and the associated [paper source](sources/docs/flash-attention-4.md) use the paper's reported B200 peak result and benchmark context.
 - [tcgen05 tutorial](sources/blogs/tcgen05-tutorial.md), [Tensor Memory](wiki/hardware/tmem.md), and related technique pages record only figures traceable to their cited sources.
 
 ## Removed material

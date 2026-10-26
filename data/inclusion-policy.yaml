@@ -6,7 +6,7 @@
 ## but that compiler capability does not establish a universal lowering form
 ## or performance result for every tl.dot shape. The Triton lane therefore
 ## remains scoped to the three sub-scopes documented below; see
-## wiki/languages/triton-blackwell.md and the version-sensitive record named
+## wiki/architectures/sm100/triton.md and the version-sensitive record named
 ## by triton.description.
 
 cute-dsl:

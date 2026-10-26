@@ -100,7 +100,7 @@ def grep_file(path, compiled_patterns, context, any_match):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Text search across Blackwell kernel wiki")
+    parser = argparse.ArgumentParser(description="Text search across the GPU kernel wiki")
     parser.add_argument("patterns", nargs="+", help="Search pattern(s) — all must match a line unless --any is used")
     parser.add_argument("--only", choices=["wiki", "sources", "all", "artifacts"], default="all",
                         help="Restrict search scope (default: all)")

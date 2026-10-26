@@ -12,7 +12,7 @@ Every page has a unique `id` with a type-specific prefix:
 | source-doc | `doc-*` | Official NVIDIA docs, papers |
 | source-blog | `blog-*` | Community blog posts, tutorials |
 | source-contest | `contest-*` | Competition problems / tracks |
-| wiki-hardware | `hw-*` | Blackwell hardware feature pages |
+| wiki-hardware | `hw-*` | GPU hardware feature and target pages |
 | wiki-technique | `technique-*` | Optimization techniques |
 | wiki-kernel | `kernel-*` | Kernel case studies with perf claims |
 | wiki-pattern | `pattern-*` | Problem → solution diagnosis |
@@ -158,13 +158,13 @@ sources: [...]
 
 ## Reproducibility Levels
 
-For `wiki-technique`, `wiki-kernel`, `wiki-language`, must be ≥ `snippet`.
+Implementation `wiki-technique`, `wiki-kernel` and `wiki-language` pages require at least `snippet`. A common `wiki-technique` or `wiki-kernel` with exactly `applicable_to: [portable]` may declare `concept` or `pseudocode`; target-specific implementations retain the snippet requirement and live under `wiki/architectures/<sm>/`.
 
 | Level | Meaning |
 |-------|---------|
 | `concept` | Text only |
 | `pseudocode` | Language-agnostic algorithm |
-| `snippet` | Compilable code fragment (verified by validator) |
+| `snippet` | Code fragment (validator checks code structure; real compilation needs a separate receipt) |
 | `runnable` | Self-contained buildable example |
 | `benchmarked` | Runnable + perf numbers with env metadata |
 
@@ -200,6 +200,16 @@ When asking about:
 - `prerequisites`: list of wiki page IDs the reader should read first
 - `candidate_techniques` (pattern only): list of technique/hw/migration IDs that address the symptoms
 
-## Blackwell-First Scope
+## Target applicability
 
-Wiki pages with a Hopper-family value and no Blackwell-family value in `architectures` MUST include a `blackwell_relevance:` field explaining why the Hopper content is kept. The validator derives both families from the canonical exact-target policy, including controlled `a`/`f` variants and the family tokens themselves. Source pages preserve upstream evidence and are exempt. Enforced for `wiki-*` page types.
+Wiki pages may declare `applicable_to: [portable]` with `architectures: []` for
+shared principles, or an explicit list of reviewed base device targets from
+`data/targets.yaml`.
+This field controls `--target` query/fetch behavior. It is not inferred from
+`architectures`, compiler suffixes or family names. Source pages retain their
+architecture evidence and do not declare guidance applicability.
+
+`prerequisites` remains a reading dependency, not a hardware requirement.
+Source confidence is separate from compilation, correctness and performance
+receipts. Legacy `blackwell_relevance` notes remain descriptive and are no
+longer an inclusion gate. See [target routing](target-routing.md).

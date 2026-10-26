@@ -13,14 +13,14 @@ Concrete patterns showing how to translate a user question into a navigation pat
 
 **Navigation path**:
 1. `queries/by-kernel-type.md` → find `gemm` row → lists kernel pages
-2. Read `wiki/kernels/fp8-block-scale-gemm.md` and `wiki/kernels/nvfp4-gemm.md`
+2. Read the shared boundary at `wiki/kernels/fp8-block-scale-gemm.md`, then the selected implementations under `wiki/architectures/sm100/`
 3. Follow `sources:` to concrete PRs: `pr-cutlass-2139` (blockwise+groupwise GEMM), `pr-vllm-13798` (FP8 GEMM)
-4. For optimization path, read `wiki/techniques/warp-specialization.md`, `wiki/techniques/persistent-kernels.md`
+4. Read the common principles, then `wiki/architectures/sm100/warp-specialization.md` and `wiki/architectures/sm100/persistent-kernels.md`
 5. For progression, cite the tcgen05 tutorial (`sources/blogs/tcgen05-tutorial.md`): Naive 17% → 128B-swizzled 3D TMA 46% → Pipelining 62% → Warp specialization 80% → 2-SM 86% → persistent static scheduling 98%
 
 **Command**:
 ```bash
-python3 scripts/query.py --type kernel --tag gemm --architecture sm100
+python3 scripts/query.py --target b200 --type kernel --tag gemm
 ```
 
 ---
@@ -29,15 +29,15 @@ python3 scripts/query.py --type kernel --tag gemm --architecture sm100
 
 **Navigation path**:
 1. `queries/by-problem.md` → find "low-sm-utilization" row
-2. Pattern page: `wiki/patterns/low-sm-utilization.md`
+2. Common pattern: `wiki/patterns/low-sm-utilization.md`; SM100 diagnosis: `wiki/architectures/sm100/pattern-low-sm-utilization.md`
 3. Candidate techniques: `technique-persistent-kernels`, `technique-tile-scheduling`, `hw-clc`
 4. Read the CLC page: `wiki/hardware/clc.md` for code example
 5. Cite: the tcgen05 tutorial showed 86% → 98% with static persistent scheduling. It presents CLC only as a possible follow-on exercise; use `wiki/hardware/clc.md` for the separate CLC mechanism.
 
 **Command**:
 ```bash
-python3 scripts/query.py --symptom low-sm-utilization
-python3 scripts/get_page.py pattern-low-sm-utilization
+python3 scripts/query.py --target b200 --symptom low-sm-utilization
+python3 scripts/get_page.py pattern-sm100-low-sm-utilization --target b200
 ```
 
 ---
@@ -62,7 +62,7 @@ Tip: the `--tag` filter also accepts aliases, so `--tag UMMA` resolves to `tcgen
 ## Example 4: "Show me the FlashAttention-4 implementation details"
 
 **Navigation path**:
-1. Direct: `wiki/kernels/flash-attention-4.md`
+1. Direct: `wiki/architectures/sm100/flash-attention-4.md`
 2. Performance: up to 1613 TFLOPS on B200 BF16 (71%) in the paper's sweep
 3. Techniques used: ping-pong scheduling, software exp, 2-CTA backward
 4. Follow sources → `sources/docs/flash-attention-4.md` (paper), `sources/blogs/flash-attention-4.md` (author blog)
@@ -77,7 +77,7 @@ python3 scripts/get_page.py kernel-flash-attention-4 --follow-sources
 ## Example 5: "What's the difference between Hopper wgmma and Blackwell tcgen05?"
 
 **Navigation path**:
-1. `wiki/migration/wgmma-to-tcgen05.md` — dedicated migration guide with `blackwell_relevance` field
+1. `wiki/architectures/sm100/wgmma-to-tcgen05.md` — dedicated target-specific migration guide
 2. `wiki/hardware/tcgen05-mma.md` — canonical reference for the new instruction
 3. Contrast with Hopper behavior implicit in the migration page
 
@@ -105,16 +105,17 @@ python3 scripts/get_page.py contest-gpumode-p1
 
 ---
 
-## Example 7: "Write a Triton kernel for GatedDeltaNet decode on Blackwell"
+## Example 7: "Which Triton evidence applies to GatedDeltaNet on H100 versus Blackwell?"
 
 **Navigation path**:
-1. `wiki/kernels/gated-delta-net.md` — conceptual + code
-2. `wiki/languages/triton-blackwell.md` — current Triton 3.6+ Blackwell lowering surfaces (tcgen05 + TMEM via descriptor/TMA + warp_specialize, `tl.dot_scaled`, Gluon multi-CTA); its opening paragraph records that the earlier pre-3.6 no-TMEM/no-tcgen05 framing is obsolete for 3.6
-3. Source PRs: `pr-vllm-*` for gated_delta, FlashInfer GDN kernels
+1. `wiki/architectures/sm90/gated-delta-net.md` and `wiki/architectures/sm90/triton.md` — retained H200 implementation evidence
+2. `wiki/architectures/sm100/triton.md` — Blackwell compiler/backend evidence, not proof that the H200 GDN kernel is an SM100 recipe
+3. Use `--architecture` separately when researching raw GDN sources
 
 **Command**:
 ```bash
-python3 scripts/query.py "gated delta net decode" --language triton
+python3 scripts/query.py --target h100 "gated delta net" --language triton
+python3 scripts/query.py --target b200 --language triton
 ```
 
 ---
@@ -122,13 +123,13 @@ python3 scripts/query.py "gated delta net decode" --language triton
 ## Example 8: "What are the memory-bound kernel optimization tricks on B200?"
 
 **Navigation path**:
-1. `wiki/patterns/memory-bound.md` — candidate techniques list
+1. `wiki/patterns/memory-bound.md` — portable diagnosis; `wiki/architectures/sm100/pattern-memory-bound.md` — B200-specific candidates
 2. `wiki/techniques/vectorized-loads.md` — wide loads + cache policies (covers `evict_first` / `no_allocate`)
-3. Case study: `wiki/kernels/nvfp4-gemv.md` records the author's 22.392 μs final aggregate; the staged 2000 → 443 → 39 → 27 → 22.392 μs sequence is on `wiki/techniques/vectorized-loads.md`, where the source attributes each step to a combination of edits
+3. `wiki/architectures/sm100/nvfp4-gemv.md` records the author's 2000 → 443 → 39 → 27 → 22.392 μs aggregate sequence and keeps the combined-edit attribution with the B200 implementation
 
 **Command**:
 ```bash
-python3 scripts/query.py --symptom memory-bound
+python3 scripts/query.py --target b200 --symptom memory-bound
 ```
 
 ---
@@ -147,7 +148,7 @@ python3 scripts/grep_wiki.py "fp8" "moe" --only sources --files-only
 ## Example 10: "What PTX instructions are unique to SM100?"
 
 **Navigation path**:
-1. `wiki/languages/ptx-sm100.md` — direct reference
+1. `wiki/architectures/sm100/ptx.md` — direct reference
 2. Cross-reference: tcgen05.alloc/mma/ld/st/dealloc/fence, clusterlaunchcontrol.try_cancel, cp.async.bulk.tensor multicast
 
 **Command**:
@@ -170,8 +171,9 @@ For most questions, a high-quality answer follows this shape:
    → wiki/hardware/*.md for hw details
    → wiki/techniques/*.md for optimization patterns
 
-3. Concrete code snippet (copy from wiki page, already validated)
-   → Every technique/kernel/language page has a compilable snippet
+3. Concrete code snippet (when the selected implementation page provides one)
+   → A snippet's fence is structurally validated; compilation and execution
+     require separate evidence
 
 4. Performance evidence (cite performance_claims)
    → Always report gpu, dtype, shape, metric, value, source_id

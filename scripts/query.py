@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Unified query tool for the Blackwell kernel wiki.
+"""Unified query tool for the device-aware GPU kernel wiki.
 
 Supports natural-language keyword queries, tag filters, repo filters, and type filters.
 
@@ -26,6 +26,7 @@ from _yaml_compat import yaml  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _wiki_root import WIKI_ROOT  # noqa: E402
 from pr_policy import architecture_matches_filter  # noqa: E402
+from target_routing import applicable_to, resolve_target, targets  # noqa: E402
 
 
 _ALIAS_CACHE = None
@@ -154,6 +155,9 @@ def filter_pages(pages, args):
         path = p["path"]
         ptype = detect_page_type(fm, path)
         p["_ptype"] = ptype
+
+        if getattr(args, "target", None) and not applicable_to(fm, args.target):
+            continue
 
         if args.type and not ptype.endswith(args.type):
             # --type kernel matches wiki-kernel, --type pr matches source-pr
@@ -295,7 +299,7 @@ def format_result(page, compact=False):
     lines.append(f"- **path**: `{path}`")
     if "architectures" in fm:
         lines.append(f"- **architectures**: {fm['architectures']}")
-    for k in ("confidence", "reproducibility"):
+    for k in ("applicable_to", "confidence", "reproducibility"):
         if k in fm:
             lines.append(f"- **{k}**: {fm[k]}")
     for k in ("tags", "techniques", "hardware_features", "kernel_types", "languages"):
@@ -311,13 +315,15 @@ def format_result(page, compact=False):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Query the Blackwell kernel wiki")
+    parser = argparse.ArgumentParser(description="Query the device-aware GPU kernel wiki")
     parser.add_argument("query", nargs="*", help="Free-text keywords")
     parser.add_argument("--type", help="Filter by page type (kernel, technique, hardware, pattern, language, migration, pr, blog, doc, contest)")
     parser.add_argument("--tag", help="Filter by tag (must appear in tags/techniques/hardware_features/kernel_types/languages)")
     parser.add_argument("--repo", help="Filter by source repo (partial match, e.g. 'cutlass')")
     parser.add_argument("--language", help="Filter by language/DSL (cute-dsl, cuda-cpp, ptx, triton, etc.)")
-    parser.add_argument("--architecture", help="Filter by exact architecture, blackwell family hierarchy, or unknown")
+    route = parser.add_mutually_exclusive_group()
+    route.add_argument("--target", help="Select reviewed guidance for a device/base SM; unknown targets get portable principles only")
+    route.add_argument("--architecture", help="Filter exact/family/unknown architecture evidence")
     parser.add_argument("--symptom", help="Filter by pattern symptom (memory-bound, register-pressure, etc.)")
     parser.add_argument("--confidence", help="Filter by confidence (verified, source-reported, inferred, experimental)")
     parser.add_argument("--has-code", action="store_true", help="Only return pages whose artifact_dir contains at least one source file")
@@ -325,6 +331,15 @@ def main():
     parser.add_argument("--compact", action="store_true", help="Compact one-line-per-result output")
     parser.add_argument("--paths-only", action="store_true", help="Output only file paths, one per line")
     args = parser.parse_args()
+
+    if args.target:
+        target = resolve_target(args.target)
+        if target:
+            print(f"Guidance target: {target}; start with {targets()[target]['page']}. "
+                  "Applicability is not compilation or performance evidence.", file=sys.stderr)
+        else:
+            print(f"Unknown device target {args.target!r}: portable principles only. "
+                  "Use a runtime base SM, not a compiler a/f suffix or marketing family.", file=sys.stderr)
 
     all_pages = load_all_pages()
     architecture_stats = None

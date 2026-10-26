@@ -1,3 +1,6 @@
+## All wiki page types may carry applicable_to: [portable] or an explicit
+## list of reviewed base device targets from data/targets.yaml. This is guidance
+## selection, separate from architectures (source scope) and runtime evidence.
 ## Page-Type Schemas
 ## Defines required and optional fields per page type.
 ## Consumed by scripts/validate.py
@@ -133,6 +136,7 @@ wiki-hardware:
     - sources
     - aliases
   optional:
+    - applicable_to
     - reproducibility
     - prerequisites
     - blackwell_relevance
@@ -155,6 +159,7 @@ wiki-technique:
     - related
     - sources
   optional:
+    - applicable_to
     - aliases
     - symptoms
     - blackwell_relevance
@@ -181,6 +186,7 @@ wiki-pattern:
     - related
     - sources
   optional:
+    - applicable_to
     - architectures
     - confidence
     - blackwell_relevance
@@ -204,6 +210,7 @@ wiki-kernel:
     - sources
     - performance_claims
   optional:
+    - applicable_to
     - aliases
     - prerequisites
     - symptoms
@@ -230,6 +237,7 @@ wiki-language:
     - sources
     - reproducibility
   optional:
+    - applicable_to
     - architectures
     - confidence
     - aliases
@@ -253,6 +261,7 @@ wiki-migration:
     - sources
     - blackwell_relevance
   optional:
+    - applicable_to
     - confidence
     - reproducibility
     - prerequisites

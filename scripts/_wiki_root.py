@@ -37,7 +37,7 @@ def resolve_wiki_root() -> Path:
             return p
         _error(
             f"BLACKWELL_WIKI_ROOT={env!r} does not point at a valid "
-            f"Blackwell kernel wiki (missing data/tags.yaml or wiki/)."
+            f"GPU kernel wiki (missing data/tags.yaml or wiki/)."
         )
 
     # 2. default: script-file grandparent == skill/wiki root
@@ -56,7 +56,7 @@ def resolve_wiki_root() -> Path:
                 return candidate
 
     _error(
-        "Could not locate the Blackwell kernel wiki root.\n"
+        "Could not locate the GPU kernel wiki root.\n"
         "       Expected a directory containing `data/tags.yaml` and `wiki/`.\n"
         "       Fix: run scripts from inside the cloned skill directory, or\n"
         "       set BLACKWELL_WIKI_ROOT to its absolute path."

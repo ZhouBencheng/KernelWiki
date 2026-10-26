@@ -11,6 +11,13 @@ languages: [cuda-cpp, python]
 related: [kernel-flashmla, kernel-nsa]
 sources: [blog-flashmla, blog-vllm-deepseek-v3-sparse, doc-nsa]
 performance_claims:
+  - gpu: H800
+    dtype: bf16
+    shape: sparse MLA prefill; upstream benchmark suite
+    metric: TFLOPS
+    value: 640
+    source_id: blog-flashmla
+    source_locator: "FlashMLA README, Test & benchmark MLA prefill (Sparse)"
   - gpu: B200
     dtype: bf16
     shape: sparse MLA prefill; upstream benchmark suite
@@ -19,6 +26,7 @@ performance_claims:
     source_id: blog-flashmla
     source_locator: "FlashMLA README, Test & benchmark MLA prefill (Sparse), plus flash_mla/flash_mla_interface.py::flash_mla_sparse_fwd dtype contract"
 blackwell_relevance: FlashMLA supports token-sparse MLA decode and prefill on SM100; the caller supplies selected token indices.
+applicable_to: [sm90, sm100]
 ---
 
 # Sparse MLA
@@ -44,7 +52,8 @@ handling, and returned `(out, max_logits, lse)` values. The excerpt is not a
 drop-in replacement for its test.
 
 Sparse decode uses an FP8-with-scale KV-cache format and BF16 attention
-arithmetic. Sparse prefill's B200 README maximum is 1450 TFLOPS; it is a
-source-reported result for that suite, not evidence for an assumed top-k value,
-page size, or separate Lightning Indexer implementation. Those unsupported
-constants and the former hand-written tcgen skeletons were removed.
+arithmetic. The README reports sparse-prefill maxima of 640 TFLOPS on H800 and
+1450 TFLOPS on B200. These belong to the named suites; they are not evidence
+for an assumed top-k value, page size, cross-device speedup, or separate
+Lightning Indexer implementation. Those unsupported constants and the former
+hand-written tcgen skeletons were removed.

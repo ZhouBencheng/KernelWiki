@@ -37,7 +37,7 @@ Access date: 2026-08-18 UTC. Comparison base: `52b8eb06f95ca9b6a1906200b1153e3e2
 ## Terminal gate receipts
 
 - Architecture: 2,692 base pages; 944 retained; 1,748 removed; 801 retained rewrites; 646 retained pages lost unsupported `sm100`; 33 family-only `blackwell`; 328/328 empty lists have a validated unknown disposition; zero unsupported assignments and zero unexplained rewrites.
-- Numeric: 3,812 candidate occurrences; 1,121 supported, 2 corrected, 1,946 removed, 743 non-material, zero unresolved.
+- Numeric: 3,808 candidate occurrences; 1,121 supported, 2 corrected, 1,946 removed, 739 non-material, zero unresolved.
 - Scope: all 2,692 base candidates have a retained/removed terminal decision; 382 were independently flagged by the broad suspicion scan and all are terminal. Current immutable evidence resolves 974 inconclusive `.cu` paths (266 positive, 708 negative) and 88 weak-tuning Python rows (30 DSL-positive, 58 negative); historical Round 9/10 repairs removed 60 and 16 pages, and the Round 11 cross-language correction removes 45 more. Capped TensorRT-LLM PRs 12470 and 14291 remain retained.
 - Generated attribution: all 944 current source-PR bodies validate against the deterministic upstream-only template, canonical stored hashes, frozen-evidence receipt, and live high-risk sample gate.
 - Artifacts: 37 retained bundles, all verbatim/upstream-patch assets verified online; zero orphan source files.

@@ -9,6 +9,7 @@ related: [technique-persistent-kernels, hw-clc]
 sources: [doc-cuda-programming-guide-pdl, pr-cutlass-2161, doc-cutlass-changelog-sm100]
 aliases: [PDL, GDC, "programmatic dependent launch", "grid dependency control"]
 blackwell_relevance: "Blackwell supports PDL, but the dependent launch still requires an explicit launch attribute and device-side synchronization."
+applicable_to: [sm90, sm100]
 ---
 
 ## Overview

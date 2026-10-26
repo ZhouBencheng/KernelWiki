@@ -1,39 +1,39 @@
 ---
 id: technique-double-buffering
-title: "Double/Multi-Buffering Patterns"
+title: "Double and multi-buffering"
 type: technique
-architectures: [sm100, sm90]
-tags: [double-buffering, tmem, pipeline-stages]
+architectures: []
+applicable_to: [portable]
+tags: [double-buffering, pipeline-stages]
 confidence: source-reported
-reproducibility: snippet
-prerequisites: [hw-tmem]
-related: [hw-tmem, technique-pipeline-stages, technique-epilogue-fusion]
-sources: [doc-ptx-isa-sm100, doc-cutlass-cute-dsl, pr-flashinfer-1039]
-blackwell_relevance: "TMEM can hold multiple logical regions while shared-memory stages overlap copy and compute; both allocations must fit the selected kernel resources."
+reproducibility: concept
+prerequisites: []
+related: [technique-sm100-double-buffering]
+sources: [doc-cuda-portable-practices]
 ---
 
 # Double and multi-buffering
 
-Buffering uses distinct storage regions for pipeline iterations so one agent can produce a stage while another consumes a different stage. On SM100, a kernel may pipeline shared-memory operand stages and may also partition its allocated TMEM columns among multiple accumulators or intermediates.
+Buffering uses distinct storage regions for pipeline iterations so a producer
+can fill one stage while a consumer uses another. It applies to ordinary shared
+memory as well as specialized storage; TMEM is not a prerequisite.
 
-The PTX ISA exposes 512 TMEM columns to a CTA, with allocation in power-of-two column counts. It does not guarantee that every accumulator occupies one column per logical output column; the mapping depends on the selected MMA kind and layout. Derive the budget from the actual tiled MMA rather than assuming two equal 256-column halves.
+- Do not overwrite a stage until every consumer has released it.
+- Track ownership and phase changes exactly once per reuse.
+- Extra stages consume storage and may reduce resident work.
+- Validate short loops, tails, initialization and final drain before timing.
+- Choose the number of stages from measured waits and resource limits; two is
+  a candidate, not a universal optimum.
 
-## Source-backed ownership fragment
+The copy and synchronization implementation is target-specific. Ampere/Ada can
+use the ordinary asynchronous-copy path; a target with TMA may use a different
+transaction-completion protocol. Consult the selected target entry before
+choosing one. The SM100 variant contains TMEM allocation constraints and the
+original upstream example, not a portable code template.
 
-This excerpt from FlashInfer PR 1039’s captured Blackwell attention mainloop shows a consumer waiting on one pipeline before acquiring and committing the next:
+## Select an implementation
 
-```cpp
-pipeline_q.consumer_wait(pipeline_q_consumer_state);
-++pipeline_q_consumer_state;
-pipeline_s0.producer_acquire(pipeline_s0_producer_state);
-gemm_zero_acc(mma_qk, tSrQ0, tSrK(_, _, _, k_index), tStS0);
-pipeline_s0.producer_commit(pipeline_s0_producer_state);
-```
-
-## Correctness and tuning checks
-
-- A stage must not be overwritten until every consumer has released it.
-- Producer and consumer phase/parity state must advance exactly once per reuse.
-- TMEM allocations must obey column-count and warp-collective lifetime rules.
-- Extra stages consume shared memory or TMEM and may reduce residency.
-- Select stage count from measured wait time and resource use; there is no universally correct default.
+Read the selected architecture entry using `query.py --target <device>`.
+The [SM100 implementation](../architectures/sm100/double-buffering.md) preserves the
+original excerpts and performance evidence. Open it only for SM100 or an
+explicit cross-architecture comparison, not as a recipe for another device.

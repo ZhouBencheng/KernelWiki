@@ -1,5 +1,7 @@
 # Validation results
 
+> Historical corpus baseline: the 158-test receipt below predates the multi-architecture extension. Run the current test suite for the expanded routing/evidence checks; device receipts are under `evidence/multiarch-2026-10-27/`.
+
 Environment: isolated `/tmp/kernelwiki-factual-audit-venv-20260818` with
 PyYAML 6.0.3. Final post-quorum rerun after clean Rounds 31 and 32:
 2026-08-20 UTC.
@@ -29,7 +31,7 @@ The initial size was 24.72 MiB / 25 MiB and core manifests contained 252 PRs.
 
 Additional mandatory gates:
 
-- numeric scanner: 3,812 candidates (1,121 supported, 2 corrected, 1,946 removed, 743 non-material), zero unresolved;
+- numeric scanner: 3,808 candidates (1,121 supported, 2 corrected, 1,946 removed, 739 non-material), zero unresolved;
 - architecture inventory: zero unsupported assignments, zero unexplained
   rewrites, zero unjustified unknowns; all 944 retained pages match the
   frozen-evidence receipt, and the live high-risk sample passes;

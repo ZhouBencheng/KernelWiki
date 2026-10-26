@@ -30,6 +30,7 @@ sources:
 - blog-simveit-effective-transpose
 - blog-simveit-load-and-store
 blackwell_relevance: These source-map repositories complement PR pages with compact, searchable examples for TMA, swizzling, Stream-K, persistent scheduling, and load/store mechanics on Hopper and Blackwell-era kernels.
+applicable_to: [sm90, sm100]
 ---
 
 ## Use

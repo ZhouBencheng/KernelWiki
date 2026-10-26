@@ -1,4 +1,4 @@
-# KernelWiki — Blackwell & Hopper Kernel Optimization Knowledge Base
+# KernelWiki — Device-aware GPU Kernel Optimization Knowledge Base
 > [!IMPORTANT]
 > This skill is maintained as a standalone submodule of
 > [Kernel Design Agents (KDA)](https://github.com/mit-han-lab/kernel-design-agents)
@@ -11,7 +11,7 @@
 > documentation, releases, and leaderboard snapshots were verified through
 > 2026-08-18 UTC.
 
-A structured knowledge base of NVIDIA Blackwell (SM100, B200) and Hopper (SM90, H100) GPU kernel optimization, packaged as a Claude Code skill. The repository root **is** the skill directory — clone it directly into `~/.claude/skills/` and it works out of the box.
+A structured NVIDIA GPU kernel knowledge base with shared optimization principles, a retained Blackwell/Hopper implementation corpus, and device-selected guidance for Orin (SM87), RTX 4090 (SM89), B200 (SM100), B300 (SM103), and Thor (SM110), packaged as a Claude Code skill. The repository root **is** the skill directory — clone it directly into `~/.claude/skills/` and it works out of the box.
 
 ## Install as a Claude Code Skill
 
@@ -63,12 +63,16 @@ All tools run from the skill root, no env var needed.
 Examples:
 
 ```bash
+python3 scripts/query.py --target orin "pipeline" --compact
+python3 scripts/query.py --target 4090 --compact
 python3 scripts/query.py "ping-pong attention" --limit 5
 python3 scripts/query.py --tag UMMA --type hardware --compact          # alias → tcgen05
 python3 scripts/query.py --architecture B200 --type kernel             # alias → sm100
 python3 scripts/get_page.py kernel-flash-attention-4 --follow-sources
 python3 scripts/grep_wiki.py "tcgen05" --only wiki
 ```
+
+For target aliases, progressive loading and device evidence, read [the target routing contract](references/target-routing.md). Shared principles stay in `wiki/techniques/`; single-target implementations and target entries live under `wiki/architectures/<sm>/`. Sources and pinned artifacts remain single-copy.
 
 ## Companion Docs
 
@@ -124,13 +128,13 @@ These commands also work without PyYAML. Installing `requirements.txt` is option
 - `scripts/repo_size_check.py` enforces the repository size budget
 - 0 broken links across all internal references
 - All `verified` wiki pages have official-doc + upstream-code evidence (enforced by `evidence_basis` field)
-- All technique/kernel/language pages have compilable code snippets (`reproducibility >= snippet`)
-- All Hopper-only wiki pages explain their `blackwell_relevance`; source pages preserve upstream evidence and are exempt
+- Architecture-specific technique, kernel and language pages retain snippet requirements; explicitly portable technique and kernel concepts may use `concept`. Code-fence validation does not prove compilation.
+- Curated target applicability is separate from source architecture evidence; no architecture requires a Blackwell inclusion justification.
 - Version-sensitive claims (currently Triton 3.6) carry `version_sensitive: <id>` pointers resolving to the central registry
 
 ## Scope Rules
 
-- **Blackwell-first** — SM100 content is primary. Hopper-only wiki pages require an explicit `blackwell_relevance` field; source pages are exempt.
+- **Device-aware** — select curated wiki guidance with `--target`; inspect source evidence with `--architecture`. Legacy `blackwell_relevance` notes remain descriptive.
 - **Kernel-only** — No distributed-system topics (DeepEP, DualPipe, EPLB are out of scope).
 - **English canonical** — All content in English.
 - **First-class DSLs** — CuTe DSL, CUDA C++, PTX, Triton. TileLang / cuTile / JAX-Pallas mentioned but no dedicated guides.

@@ -5,7 +5,7 @@ version_sensitive:
 
 # Topic Map / Primer
 
-A compact, authoritative map of the knowledge base. Use this as a fast lookup table when the user's question is broad — each row tells you exactly which page to open.
+This is the retained B200/Hopper topic map. First choose the actual device with `query.py --target`; a row here is not evidence that its implementation applies to another GPU. For shared principles and target entry points, use [target routing](target-routing.md).
 
 All page IDs below resolve via `get_page.py <id>`. All paths are relative to the wiki root (the directory containing `data/`, `wiki/`, `sources/`, `queries/`).
 
@@ -19,8 +19,8 @@ All page IDs below resolve via `get_page.py <id>`. All paths are relative to the
 | Tensor Memory (TMEM) | `hw-tmem` | `wiki/hardware/tmem.md` | CTA-visible 128-lane × 512-column view of 32-bit cells; allocated in columns by a fully active warp. |
 | Cluster Launch Control (CLC) | `hw-clc` | `wiki/hardware/clc.md` | A running cluster can acquire the ID of a successfully canceled, not-yet-launched cluster from its grid. |
 | Tensor Memory Accelerator (TMA) | `hw-tma` | `wiki/hardware/tma.md` | Async bulk load/store (`cp.async.bulk.tensor`), multicast across cluster. |
-| 2-SM Cooperative MMA | `hw-2sm-cooperative` | `wiki/hardware/2sm-cooperative.md` | `cta_group::2` — two CTAs in one cluster cooperate on a single MMA. |
-| NVFP4 / block-scaled FP | `hw-nvfp4` | `wiki/hardware/nvfp4.md` | E2M1 data + per-16 FP8 scale; task prose says E4M3FNUZ, current reference code uses `torch.float8_e4m3fn`. PTX `UE4M3` is a distinct 7-bit unsigned encoding; MXFP4's `UE8M0` is a distinct block-32 format. |
+| 2-SM Cooperative MMA | `hw-2sm-cooperative` | `wiki/architectures/sm100/2sm-cooperative.md` | `cta_group::2` — two CTAs in one cluster cooperate on a single MMA. |
+| NVFP4 / block-scaled FP | `hw-nvfp4` | `wiki/architectures/sm100/nvfp4.md` | E2M1 data + per-16 FP8 scale; task prose says E4M3FNUZ, current reference code uses `torch.float8_e4m3fn`. PTX `UE4M3` is a distinct 7-bit unsigned encoding; MXFP4's `UE8M0` is a distinct block-32 format. |
 | PDL / GDC | `hw-pdl-gdc` | `wiki/hardware/pdl-gdc.md` | Programmatic Dependent Launch and Grid Dependency Control — overlap successive kernel launches. |
 | mbarrier primitives | `hw-mbarrier` | `wiki/hardware/mbarrier.md` | Shared-memory barriers with phase tracking; the glue between TMA/tcgen05/warps. |
 
@@ -57,10 +57,10 @@ All page IDs below resolve via `get_page.py <id>`. All paths are relative to the
 | NVFP4 GEMM | `kernel-nvfp4-gemm` | — | tcgen05 + per-16 FP8 scales (task prose: E4M3FNUZ; reference code: `torch.float8_e4m3fn`); PTX `UE4M3` is distinct, as is MXFP4's block-32 `UE8M0` |
 | NVFP4 batched GEMV | `kernel-nvfp4-gemv` | Author reports a 22.392 µs final aggregate after a multi-step tuning sequence | Memory access, PTX, cache policy, instruction-level parallelism |
 | FP8 block-scale GEMM | `kernel-fp8-block-scale-gemm` | — | 1×128 / 128×128 block scaling scheme |
-| Fused MoE | `kernel-fused-moe` | — | Gate-up fused with SwiGLU; FP8 block scale routing |
-| Gated Dual GEMM | `kernel-gated-dual-gemm` | — | Gate × Up → SiLU fused in epilogue |
+| Fused MoE | `kernel-sm100-fused-moe` | — | SM100 gate-up fused with SwiGLU; FP8 block scale routing |
+| Gated Dual GEMM | `kernel-sm100-gated-dual-gemm` | — | SM100 Gate × Up → SiLU fused in epilogue |
 | Grouped GEMM for MoE | `kernel-grouped-gemm` | — | Variable-sized expert GEMMs in one launch |
-| FlashMLA | `kernel-flashmla` | DeepSeek V3 decode | MLA-specific TMA + tcgen05 layout |
+| FlashMLA | `kernel-flashmla` | DeepSeek V3 decode | MLA-specific target dispatch and layout |
 | Sparse MLA | `kernel-sparse-mla` | DeepSeek V3.2 | Sparse KV retrieval before MLA core |
 | Native Sparse Attention (NSA) | `kernel-nsa` | 9× fwd speedup | Block-sparse + compressed attention |
 | Gated Delta Net | `kernel-gated-delta-net` | — | Chunk parallelism; linear attention |
@@ -88,7 +88,8 @@ All page IDs below resolve via `get_page.py <id>`. All paths are relative to the
 | CuTe DSL | `lang-cute-dsl` | Preferred high-level path on SM100; native tcgen05/TMEM/CLC bindings. |
 | CUDA C++ | `lang-cuda-cpp` | PTX inline is common; used by CUTLASS, vLLM, SGLang custom kernels. |
 | PTX (SM100) | `lang-ptx` | `tcgen05.*`, `clusterlaunchcontrol.*`, `cp.async.bulk.tensor.*` — low-level control. |
-| Triton | `lang-triton` | On Blackwell: Triton 3.6+ ships native tcgen05 + TMEM lowering through descriptor/TMA + `tl.range(warp_specialize=True)`, `tl.dot_scaled`, and Gluon multi-CTA / 2CTA. Pre-3.6 the framing was "no tcgen05/TMEM exposure"; that historical context is preserved on the page. Cite via `version_sensitive: vs-triton-3.6-blackwell-tcgen05`. |
+| Triton (Hopper) | `lang-triton` | Retained H200 GatedDeltaNet layout-fusion evidence; this is not a Blackwell recipe. |
+| Triton 3.6 (SM100) | `lang-sm100-triton` | Blackwell backend evidence for TMEM, tcgen05, scaled MMA, and multi-CTA / 2CTA work. Cite version-sensitive claims via `vs-triton-3.6-blackwell-tcgen05`; a surface `tl.dot` call alone does not prove one lowering or speedup. |
 
 ---
 
@@ -159,9 +160,12 @@ The `query.py` tool applies these automatically when scoring and when using `--t
 
 ## Confidence & Evidence Quick Reference
 
-- **`verified`** — page carries an `evidence_basis` list with at least one `official-doc` AND one `upstream-code` entry. Safe to quote as authoritative.
+- **`verified`** — page carries an `evidence_basis` list with at least one `official-doc` AND one `upstream-code` entry. Inspect the cited scope and locators; this is source confidence, not execution evidence.
 - **`source-reported`** — claims come from ≥ 1 authoritative source (paper, official blog, major repo). Most wiki pages live here.
 - **`inferred`** — synthesized from multiple sources; flag when quoting.
 - **`experimental`** — undocumented / version-sensitive / PTX tricks. Always caveat.
 
-Minimum reproducibility for technique, kernel, and language pages: **`snippet`** (compilable fragment) — validator-enforced.
+Architecture-specific technique, kernel, and language implementations require
+at least **`snippet`**. A portable technique or kernel principle may be
+**`concept`**; the validator checks code-fence structure for snippets but does
+not compile or run them.

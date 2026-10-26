@@ -1,5 +1,7 @@
 # Mandatory regression-test ledger
 
+> Historical corpus baseline: the 158-test receipt below predates the multi-architecture extension. Run the current test suite for the expanded routing/evidence checks; device receipts are under `evidence/multiarch-2026-10-27/`.
+
 ## Baseline
 
 `python3 -m unittest discover -s tests -p 'test_*.py'` failed with exit 5
@@ -104,7 +106,7 @@ Coverage includes:
   source body and propagated navigation avoid sole-authorship language.
 - the Qwen3-Next source records the NVIDIA article's named author and rejects
   the unsupported organization-pair credit;
-- the numeric ledger's 3,812 disposition rows and four status counts are
+- the numeric ledger's 3,808 disposition rows and four status counts are
   mechanically recomputed and required to agree with all three current audit
   summaries;
 - the complete concrete source-PR example in the schema reference must equal

@@ -12,6 +12,7 @@ related: [kernel-fused-moe, kernel-deepgemm, technique-persistent-kernels, techn
 sources: [contest-gpumode-p4, blog-deepgemm, pr-DeepGEMM-304, blog-gpu-mode-reward-hack]
 performance_claims: []
 blackwell_relevance: SM100 implementations can use native block-scaled MMA and either static persistence or CLC-assisted work acquisition; the scheduler is an implementation choice.
+applicable_to: [sm90, sm100]
 ---
 
 # Grouped GEMM for MoE
@@ -53,9 +54,9 @@ representations; it does not justify a hand-written generic tcgen instruction.
 - A masked layout keeps a fixed allocation and supplies each expert's valid M,
   which is useful when stable shapes matter.
 - A static persistent scheduler computes a deterministic tile sequence.
-- A CLC scheduler on Blackwell may acquire IDs of same-grid clusters canceled
-  before launch. CLC is optional and does not guarantee that variable expert
-  work becomes balanced.
+- A target-specific dynamic scheduler must preserve the same group and output
+  mapping; select it through the target route rather than assuming one hardware
+  work-acquisition protocol is portable.
 
 Correctness tests should cover empty experts, nonuniform row counts, padding,
 scale layouts, output offsets, and both architecture dispatch branches. Measure

@@ -8,6 +8,7 @@ confidence: source-reported
 related: [technique-persistent-kernels, technique-tile-scheduling, pattern-tail-effect]
 sources: [doc-ptx-isa-sm100, doc-cutlass-blackwell]
 aliases: [CLC, "cluster launch control"]
+applicable_to: [sm100, sm103]
 ---
 
 # Cluster Launch Control (CLC)

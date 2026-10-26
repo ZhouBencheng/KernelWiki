@@ -1,45 +1,36 @@
 ---
 id: technique-epilogue-fusion
-title: Epilogue fusion
+title: "Epilogue fusion"
 type: technique
-architectures: [sm100, sm90]
-tags: [epilogue-fusion, tmem, warp-specialization]
+architectures: []
+applicable_to: [portable]
+tags: [epilogue-fusion, kernel-fusion]
 confidence: source-reported
-reproducibility: snippet
-prerequisites: [technique-warp-specialization]
-related: [technique-warp-specialization, hw-tmem, technique-double-buffering]
-sources: [doc-cutlass-blackwell, pr-vllm-16032]
-blackwell_relevance: CUTLASS SM100 collectives expose typed epilogue builders; the chosen schedule and synchronization determine whether epilogue work overlaps the mainloop.
-artifact_dir: artifacts/kernels/epilogue-fusion
+reproducibility: concept
+prerequisites: []
+related: [technique-sm100-epilogue-fusion]
+sources: [doc-cuda-portable-practices]
 ---
 
 # Epilogue fusion
 
-A GEMM epilogue converts accumulator values into output values and may combine
-scaling, a source tensor, bias, activation, or quantization before the store.
-Fusion can avoid a separate launch and intermediate global-memory round trip.
-Overlap with a later mainloop is a separate scheduling property and requires an
-explicit buffer-ownership protocol.
+An epilogue converts an accumulator to output and can combine scaling, bias,
+a source tensor, activation or quantization before the store. Fusion may save
+a launch and intermediate memory traffic. Overlap with another tile is a
+separate scheduling property requiring explicit ownership and synchronization.
 
-vLLM PR 16032 supplies a retained SM100 CUTLASS configuration. This contiguous
-excerpt from its pinned upstream file uses the collective builder rather than a
-hand-written TMEM-load pseudo-API:
+Validate alpha/beta or source-tensor semantics, activation edge cases, output
+conversion and tails. Preserve the requested numerical contract, including
+accumulation and rounding. Measure fusion savings separately from tile-shape,
+mainloop or precision changes.
 
-```cpp
-using CollectiveEpilogue =
-    typename cutlass::epilogue::collective::CollectiveBuilder<
-        ArchTag, OperatorClass, PerSmTileShape_MNK, ClusterShape,
-        cutlass::epilogue::collective::EpilogueTileAuto, ElementAccumulator,
-        ElementAccumulator, ElementC, LayoutCTag, AlignmentC, ElementD,
-        LayoutDTag, AlignmentD,
-        cutlass::epilogue::collective::EpilogueScheduleAuto>::CollectiveOp;
-```
+Registers, shared memory and specialized accumulator storage need different
+implementations. The SM100 variant retains the CUTLASS epilogue builder and its
+TMEM caveats; a target entry selects the appropriate implementation knowledge.
 
-Use the complete builder and generated kernel for its supported operations.
-Blackwell does not prescribe 14 epilogue warps, a 256/256 TMEM split, or one
-universal visitor type. The former page and derived artifact asserted all three
-and were removed.
+## Select an implementation
 
-Correctness tests must cover alpha/beta or source-tensor semantics, activation
-edge cases, output conversion, tails, and buffer reuse. Performance attribution
-must distinguish fusion savings from mainloop or tile-shape changes.
+Read the selected architecture entry using `query.py --target <device>`.
+The [SM100 implementation](../architectures/sm100/epilogue-fusion.md) preserves the
+original excerpts and performance evidence. Open it only for SM100 or an
+explicit cross-architecture comparison, not as a recipe for another device.

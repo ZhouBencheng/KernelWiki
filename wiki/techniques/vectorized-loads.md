@@ -2,33 +2,19 @@
 id: technique-vectorized-loads
 title: "Wide Vectorized Loads and Cache Policies"
 type: technique
-architectures: [sm100, sm90]
+architectures: []
+applicable_to: [portable]
 tags: [vectorized-loads, cache-policy, register-budgeting]
 confidence: source-reported
 reproducibility: snippet
 prerequisites: []
-related: [kernel-nvfp4-gemv, pattern-memory-bound]
-sources: [blog-yue-nvfp4, blog-amandeep-nvfp4, contest-gpumode-p1, pr-cccl-3517]
-blackwell_relevance: Wide loads and per-stream cache hints are candidates for measured, bandwidth-limited kernels; neither is universally optimal.
+related: [pattern-memory-bound, technique-cache-policy]
+sources: [pr-cccl-3517]
 ---
 
 # Wide Vectorized Loads and Cache Policies
 
 Memory-bound kernels can reduce load-instruction overhead and improve transaction formation by moving aligned contiguous words per thread. The legal and useful width depends on pointer alignment, per-lane address mapping, register pressure, and how the compiler lowers the operation.
-
-## NVFP4 GEMV evidence
-
-Yue Zhang reports the following end-to-end optimization sequence for one GPU Mode problem-1 submission:
-
-| Stage | Reported latency |
-|---|---:|
-| Naive CUDA attempt | 2000 microseconds |
-| Coalesced rewrite | 443 microseconds |
-| Hardware-intrinsic rewrite | 39 microseconds |
-| PTX rewrite | 27 microseconds |
-| Final combined submission | 22.392 microseconds |
-
-The stages combine layout, decoding, PTX, cache-policy, and instruction-level-parallelism changes. They do not establish a vector-load-only speedup. Amandeep Singh separately reports 26.7 microseconds for the CUDA baseline and an 8.6-microsecond speed-of-light estimate on the largest configuration in that article; this is a different benchmark context.
 
 ## Evaluation procedure
 
@@ -55,4 +41,5 @@ if (reinterpret_cast<uintptr_t>(block_src_ptr) % alignof(vector_t) == 0)
 ```
 
 The complete upstream branch includes the vector-load loop and fallback path;
-the excerpt alone is not a replacement for `BlockLoad`.
+the excerpt alone is not a replacement for `BlockLoad`. B200 NVFP4 timing
+evidence remains with the target-specific `kernel-nvfp4-gemv` page.

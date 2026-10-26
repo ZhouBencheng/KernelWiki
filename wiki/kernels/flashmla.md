@@ -11,6 +11,20 @@ languages: [cuda-cpp, python]
 related: [kernel-sparse-mla, kernel-nsa]
 sources: [blog-flashmla]
 performance_claims:
+  - gpu: H800
+    dtype: bf16
+    shape: sparse MLA prefill; upstream benchmark suite
+    metric: TFLOPS
+    value: 640
+    source_id: blog-flashmla
+    source_locator: "FlashMLA README, Test & benchmark MLA prefill (Sparse)"
+  - gpu: H800
+    dtype: bf16
+    shape: dense MLA decode; upstream compute-bound benchmark suite
+    metric: TFLOPS
+    value: 660
+    source_id: blog-flashmla
+    source_locator: "FlashMLA README, Test & benchmark MLA decode"
   - gpu: B200
     dtype: not stated in upstream README
     shape: dense MHA prefill; upstream benchmark suite
@@ -26,6 +40,7 @@ performance_claims:
     source_id: blog-flashmla
     source_locator: "FlashMLA README, Test & benchmark MLA prefill (Sparse), plus flash_mla/flash_mla_interface.py::flash_mla_sparse_fwd dtype contract"
 blackwell_relevance: FlashMLA's support matrix includes SM100 sparse decode, dense MHA prefill, and sparse MLA prefill with CUDA 12.9 or newer for SM100.
+applicable_to: [sm90, sm100]
 ---
 
 # FlashMLA attention kernels
@@ -59,9 +74,11 @@ The documented FP8 decode cache is 656 bytes per token: 512 E4M3 values, four
 FP32 scales, and 64 BF16 RoPE values. Sparse decode's indices encode the page
 block and within-page offset; invalid values are `-1`.
 
-The retained B200 prefill maxima are 1460 TFLOPS for dense MHA forward and 1450
-TFLOPS for sparse MLA forward. They come from different benchmark suites and
-must not be interpreted as a controlled dense-versus-sparse comparison.
+The retained H800 maxima include 660 TFLOPS for compute-bound dense MLA decode
+and 640 TFLOPS for sparse MLA prefill. The B200 prefill maxima are 1460 TFLOPS
+for dense MHA forward and 1450 TFLOPS for sparse MLA forward. These come from
+different benchmark modes and must not be interpreted as controlled
+cross-mode or cross-device comparisons.
 
 The former `artifacts/kernels/flashmla` bundle was removed because its files
 were sourced from CUTLASS and FlashInfer PRs rather than the FlashMLA repository.

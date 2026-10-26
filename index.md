@@ -1,6 +1,9 @@
-# Blackwell Kernel Optimization Knowledge Base
+# Device-aware GPU Kernel Optimization Knowledge Base
 
-> Comprehensive knowledge base for GPU kernel optimization on NVIDIA Blackwell (SM100) and Hopper (SM90).
+Start with [device-aware routing](references/target-routing.md); this wider corpus index also includes explicitly scoped comparison material.
+
+> Shared guidance and a retained NVIDIA Blackwell/Hopper implementation corpus,
+> with explicit routes for SM87, SM89, SM90, SM100, SM103, and SM110.
 > Optimized for LLM agent retrieval. See [CLAUDE.md](CLAUDE.md) for schema and conventions.
 > **For Claude Code agents**: this repository is a Claude Code skill — see [SKILL.md](SKILL.md).
 
@@ -28,38 +31,38 @@ See [references/examples.md](references/examples.md) for 10 worked query pattern
 
 ## Hardware Features
 
-- [hw-tcgen05-mma](wiki/hardware/tcgen05-mma.md) — Blackwell MMA instruction (replaces wgmma)
-- [hw-tmem](wiki/hardware/tmem.md) — Tensor Memory (CTA-visible 128-lane × 512-column view)
+- [hw-tcgen05-mma](wiki/hardware/tcgen05-mma.md) — Shared fifth-generation MMA execution contract
+- [hw-tmem](wiki/hardware/tmem.md) — Shared Tensor Memory ownership and lifetime contract
 - [hw-clc](wiki/hardware/clc.md) — Cluster Launch Control (dynamic tile scheduling)
 - [hw-tma](wiki/hardware/tma.md) — Tensor Memory Accelerator (async bulk loads)
-- [hw-2sm-cooperative](wiki/hardware/2sm-cooperative.md) — Two-SM cooperative MMA
-- [hw-nvfp4](wiki/hardware/nvfp4.md) — NVFP4 and block-scaled narrow precision
+- [hw-2sm-cooperative](wiki/architectures/sm100/2sm-cooperative.md) — SM100 two-CTA cooperative MMA
+- [hw-nvfp4](wiki/architectures/sm100/nvfp4.md) — SM100 NVFP4 and block-scaled narrow precision
 - [hw-pdl-gdc](wiki/hardware/pdl-gdc.md) — Programmatic Dependent Launch / Grid Dependency Control
 
 ## Optimization Techniques
 
 - [technique-warp-specialization](wiki/techniques/warp-specialization.md) — Warp role assignment
-- [technique-persistent-kernels](wiki/techniques/persistent-kernels.md) — Persistent kernel patterns with CLC
+- [technique-persistent-kernels](wiki/techniques/persistent-kernels.md) — Persistent kernels and work scheduling
 - [technique-swizzling](wiki/techniques/swizzling.md) — Shared memory swizzling
 - [technique-pipeline-stages](wiki/techniques/pipeline-stages.md) — Software pipelining
 - [technique-epilogue-fusion](wiki/techniques/epilogue-fusion.md) — Fusing epilogue with mainloop
 - [technique-tile-scheduling](wiki/techniques/tile-scheduling.md) — Tile scheduling strategies
 - [technique-double-buffering](wiki/techniques/double-buffering.md) — Double/multi-buffering
-- [technique-software-exp](wiki/techniques/software-exp.md) — Software-emulated exponential
+- [technique-software-exp](wiki/architectures/sm100/software-exp.md) — FlashAttention-4 software exponential
 - [technique-fine-grained-quantization](wiki/techniques/fine-grained-quantization.md) - Fine-grained FP8/FP4 quantization
 - [technique-vectorized-loads](wiki/techniques/vectorized-loads.md) — Wide vectorized loads and cache policies
 
 ## Kernel Case Studies
 
-- [kernel-flash-attention-4](wiki/kernels/flash-attention-4.md) — FlashAttention-4 (up to 1613 TFLOPS on B200 in the paper's benchmark sweep)
+- [kernel-flash-attention-4](wiki/architectures/sm100/flash-attention-4.md) — FlashAttention-4 (up to 1613 TFLOPS on B200 in the paper's benchmark sweep)
 - [kernel-deepgemm](wiki/kernels/deepgemm.md) — DeepGEMM FP8 GEMM (1550 TFLOPS on H800)
 - [kernel-flashmla](wiki/kernels/flashmla.md) — FlashMLA sparse/dense MLA decoding
 - [kernel-nsa](wiki/kernels/nsa.md) — Native Sparse Attention (9x fwd speedup)
-- [kernel-gated-delta-net](wiki/kernels/gated-delta-net.md) — Gated Delta Net linear attention
-- [kernel-nvfp4-gemm](wiki/kernels/nvfp4-gemm.md) — NVFP4 GEMM from GPU Mode hackathon
-- [kernel-nvfp4-gemv](wiki/kernels/nvfp4-gemv.md) — NVFP4 batched GEMV optimization
+- [kernel-gated-delta-net](wiki/architectures/sm90/gated-delta-net.md) — H200 Gated Delta Net projection fusion
+- [kernel-nvfp4-gemm](wiki/architectures/sm100/nvfp4-gemm.md) — NVFP4 GEMM from GPU Mode hackathon
+- [kernel-nvfp4-gemv](wiki/architectures/sm100/nvfp4-gemv.md) — NVFP4 batched GEMV optimization
 - [kernel-grouped-gemm](wiki/kernels/grouped-gemm.md) — Grouped GEMM for MoE
-- [kernel-fused-moe](wiki/kernels/fused-moe.md) — Fused MoE with FP8
+- [kernel-fused-moe](wiki/kernels/fused-moe.md) — Portable fused-MoE boundary; target implementations are separate
 
 ## Problem → Solution Patterns
 
@@ -71,15 +74,16 @@ See [references/examples.md](references/examples.md) for 10 worked query pattern
 
 ## Languages & DSLs
 
-- [lang-cute-dsl](wiki/languages/cute-dsl.md) — CuTe DSL for Blackwell
-- [lang-cuda-cpp](wiki/languages/cuda-cpp.md) — CUDA C++ with PTX inline
-- [lang-ptx](wiki/languages/ptx-sm100.md) — PTX instructions for SM100
-- [lang-triton](wiki/languages/triton-blackwell.md) — Triton on Blackwell
+- [lang-cute-dsl](wiki/architectures/sm100/cute-dsl.md) — CuTe DSL for SM100
+- [lang-cuda-cpp](wiki/architectures/sm100/cuda-cpp.md) — CUDA C++ with SM100 inline PTX
+- [lang-ptx](wiki/architectures/sm100/ptx.md) — PTX instructions for SM100
+- [lang-triton](wiki/architectures/sm90/triton.md) — Triton on Hopper
+- [lang-sm100-triton](wiki/architectures/sm100/triton.md) — Triton 3.6 Blackwell backend
 
 ## Migration Guides
 
-- [migration-wgmma-to-tcgen05](wiki/migration/wgmma-to-tcgen05.md) — Hopper wgmma → Blackwell tcgen05
-- [migration-register-to-tmem](wiki/migration/register-to-tmem.md) — Register accumulators → TMEM
+- [migration-wgmma-to-tcgen05](wiki/architectures/sm100/wgmma-to-tcgen05.md) — Hopper wgmma → Blackwell tcgen05
+- [migration-register-to-tmem](wiki/architectures/sm100/register-to-tmem.md) — Register accumulators → TMEM
 
 ## Source Repositories
 

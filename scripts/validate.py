@@ -13,10 +13,11 @@ from _yaml_compat import yaml  # noqa: E402
 from pr_policy import (  # noqa: E402
     ARCHITECTURE_FAMILY_PREFIXES,
     PRODUCT_ARCHITECTURE_MAPPINGS,
-    SUPPORTED_EXACT_ARCHITECTURES,
     body_contract_errors,
     device_code_pattern_sha256,
 )
+
+from target_routing import applicability_errors, target_registry_errors, targets
 
 REPO_ROOT = Path(__file__).parent.parent
 SOURCES_DIR = REPO_ROOT / "sources"
@@ -29,18 +30,6 @@ PR_CAP_RECONSTRUCTION_RECEIPT = REPO_ROOT / "audit" / "pr-file-cap-reconstructio
 
 REPRO_ORDER = ["concept", "pseudocode", "snippet", "runnable", "benchmarked"]
 
-
-def architecture_family_values(family):
-    """Return the family token plus every controlled exact target in it."""
-    prefixes = ARCHITECTURE_FAMILY_PREFIXES[family]
-    return frozenset({
-        family,
-        *(arch for arch in SUPPORTED_EXACT_ARCHITECTURES if arch.startswith(prefixes)),
-    })
-
-
-HOPPER_ARCHITECTURES = architecture_family_values("hopper")
-BLACKWELL_ARCHITECTURES = architecture_family_values("blackwell")
 
 # Offline contract for curated wiki/source-doc links into NVIDIA's rolling PTX
 # ISA. Each fragment was resolved against PTX ISA 9.3 on 2026-08-19.
@@ -537,25 +526,6 @@ def ptx_isa_curated_anchor_errors(body, rel="curated page"):
     return [f"{rel}: unverified PTX ISA fragment '#{fragment}'" for fragment in unknown]
 
 
-def blackwell_relevance_errors(fm, page_type, rel="wiki page"):
-    """Require justification exactly for Hopper-only wiki pages."""
-    if not page_type.startswith("wiki-"):
-        return []
-    archs = set(
-        fm.get("architectures", [])
-        if isinstance(fm.get("architectures"), list)
-        else []
-    )
-    hopper_archs = archs & HOPPER_ARCHITECTURES
-    blackwell_archs = archs & BLACKWELL_ARCHITECTURES
-    if hopper_archs and not blackwell_archs and "blackwell_relevance" not in fm:
-        return [
-            f"{rel}: page targets only Hopper {hopper_archs} without Blackwell arch; "
-            "add 'blackwell_relevance' to justify inclusion in Blackwell-first scope"
-        ]
-    return []
-
-
 def repro_at_least(level, minimum):
     if level not in REPRO_ORDER or minimum not in REPRO_ORDER:
         return False
@@ -648,6 +618,17 @@ def validate_file(filepath, schemas, valid_tags, all_source_ids, code_langs):
         errors.append(f"{rel}: unknown page type")
         return errors
 
+    errors.extend(f"{rel}: {error}" for error in applicability_errors(fm))
+    scope = fm.get("applicable_to")
+    if page_type.startswith("wiki-") and isinstance(scope, list) and len(scope) == 1:
+        target = scope[0]
+        if target in targets():
+            expected = Path("wiki") / "architectures" / target
+            if expected not in [rel.parent, *rel.parent.parents]:
+                errors.append(
+                    f"{rel}: single-target guidance for {target} must live under "
+                    f"{expected}/"
+                )
     errors.extend(arxiv_source_classification_errors(filepath, fm, page_type))
     if page_type == "source-pr":
         errors.extend(merge_sha_contract_errors(fm, rel))
@@ -876,6 +857,8 @@ def validate_file(filepath, schemas, valid_tags, all_source_ids, code_langs):
 
     # Check reproducibility minimum
     repro_min = constraints.get("reproducibility_minimum")
+    if page_type in ("wiki-technique", "wiki-kernel") and fm.get("applicable_to") == ["portable"]:
+        repro_min = "concept"
     if repro_min and "reproducibility" in fm:
         if not repro_at_least(fm["reproducibility"], repro_min):
             errors.append(
@@ -911,7 +894,6 @@ def validate_file(filepath, schemas, valid_tags, all_source_ids, code_langs):
                 f"expected '{constraints['type']}' for {page_type}"
             )
 
-    errors.extend(blackwell_relevance_errors(fm, page_type, rel))
 
     # Check performance_claims structure (including shape and numeric value)
     if "performance_claims" in fm:
@@ -983,7 +965,8 @@ def validate_file(filepath, schemas, valid_tags, all_source_ids, code_langs):
                         )
 
     # Pages that claim snippet-or-better reproducibility must actually carry a
-    # compilable fence. Concept and pseudocode pages are allowed to remain
+    # language-labeled code fence. This is a structural check, not compilation.
+    # Concept and pseudocode pages are allowed to remain
     # honest prose instead of being forced to invent an implementation.
     if (
         page_type in ("wiki-technique", "wiki-kernel", "wiki-language")
@@ -1546,8 +1529,7 @@ def validate_claim_bearing_pages_have_pointer():
     """If an in-scope page contains any obsolete claim signature, it MUST
     carry a version_sensitive frontmatter pointer. Pages with the
     signatures inside an explicitly-marked historical-context block
-    are exempt (the wiki/languages/triton-blackwell.md historical
-    subsection)."""
+    are exempt (a clearly marked historical subsection)."""
     errors = []
     in_scope = []
     if WIKI_DIR.exists():
@@ -2020,6 +2002,27 @@ def main():
         fm = extract_frontmatter(md_file)
         if fm and isinstance(fm, dict) and "id" in fm:
             all_known_ids.add(fm["id"])
+
+    # Device routes must remain explicit, unambiguous, and bound to one entry
+    # page whose applicability exactly matches the base target.
+    configured_targets = targets()
+    all_errors.extend(target_registry_errors(configured_targets))
+    for target, profile in configured_targets.items() if isinstance(configured_targets, dict) else []:
+        entry_id = profile.get("page") if isinstance(profile, dict) else None
+        matches = []
+        for md_file in sorted(WIKI_DIR.rglob("*.md")) if WIKI_DIR.exists() else []:
+            fm = extract_frontmatter(md_file)
+            if isinstance(fm, dict) and fm.get("id") == entry_id:
+                matches.append((md_file, fm))
+        if len(matches) != 1:
+            all_errors.append(
+                f"data/targets.yaml::{target}: page {entry_id!r} resolves to {len(matches)} wiki pages"
+            )
+        elif matches[0][1].get("applicable_to") != [target]:
+            all_errors.append(
+                f"{matches[0][0].relative_to(REPO_ROOT)}: target entry must declare "
+                f"applicable_to: [{target}]"
+            )
 
     # Second pass: validate everything
     for search_dir in [SOURCES_DIR, WIKI_DIR]:

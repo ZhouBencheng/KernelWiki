@@ -1,6 +1,6 @@
-# Blackwell Kernel Optimization Knowledge Base — Schema
+# GPU Kernel Optimization Knowledge Base — Schema
 
-A structured knowledge base of GPU kernel optimization for NVIDIA Blackwell (SM100) and Hopper (SM90), optimized for LLM agent retrieval.
+A structured GPU kernel knowledge base with device-selected guidance. Start with `SKILL.md` and `references/target-routing.md`; use `--target` for applicable wiki guidance and `--architecture` for source evidence. The retained SM100/Hopper corpus is not a compatibility guarantee for another device.
 
 ## Navigation
 
@@ -56,7 +56,7 @@ See `data/schemas.yaml` for full schema definitions. Summary:
 | source-blog | blog- | title, author, url, source_category, architectures, tags, retrieved_at |
 | source-contest | contest- | title, source_category, architectures, tags |
 | wiki-hardware | hw- | title, type=hardware, architectures, tags, confidence, related, sources, aliases |
-| wiki-technique | technique- | title, type=technique, architectures, tags, confidence, reproducibility(>=snippet), prerequisites, related, sources |
+| wiki-technique | technique- | title, type=technique, architectures, tags, confidence, reproducibility (implementation >= snippet; portable concept allowed), prerequisites, related, sources |
 | wiki-pattern | pattern- | title, type=pattern, tags, symptoms, candidate_techniques, related, sources |
 | wiki-kernel | kernel- | title, type=kernel, architectures, tags, confidence, reproducibility(>=snippet), kernel_types, languages, related, sources, performance_claims |
 | wiki-language | lang- | title, type=language, tags, related, sources, reproducibility(>=snippet) |
@@ -86,11 +86,11 @@ Alias mappings in `data/aliases.yaml` map canonical terms to known synonyms:
 
 - `concept`: text description only
 - `pseudocode`: language-agnostic algorithm
-- `snippet`: compilable code fragment
+- `snippet`: code fragment; validator checks its fence structure, not compilation
 - `runnable`: self-contained buildable example
 - `benchmarked`: runnable + perf numbers with env metadata
 
-**Minimum for technique/kernel/language pages**: `snippet`
+**Minimum for target-specific technique/kernel/language implementations**: `snippet`. Explicitly portable technique and kernel concepts (`applicable_to: [portable]`) may declare `concept` or `pseudocode`; the code-fence check is not a compilation test. Single-target guidance lives under `wiki/architectures/<sm>/`.
 
 ## Performance Claim Format
 
@@ -115,7 +115,7 @@ performance_claims:
 
 ## Scope Rules
 
-- **Blackwell-first**: SM100 content is primary. Hopper-only wiki pages require explicit `blackwell_relevance`; source pages preserve upstream evidence and are exempt.
+- **Device-aware**: `applicable_to` gates curated wiki guidance. Source evidence remains distinct. `blackwell_relevance` is retained descriptive metadata, not an inclusion requirement.
 - **Kernel-only**: No distributed system topics (DeepEP, DualPipe, EPLB excluded).
 - **English canonical**: All content in English.
 - **First-class DSLs**: CuTe DSL, CUDA C++, PTX, Triton. Others mentioned but no dedicated pages.

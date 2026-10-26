@@ -1,0 +1,20 @@
+# Device-level guidance routes, not compiler target compatibility claims.
+# Explicit aliases only. SM numbers and architecture families imply no inheritance.
+sm87:
+  aliases: [orin, jetson orin, agx orin, jetson agx orin, sm_87, "8.7"]
+  page: hw-target-sm87
+sm89:
+  aliases: ["4090", rtx4090, rtx 4090, geforce rtx 4090, nvidia geforce rtx 4090, sm_89, "8.9"]
+  page: hw-target-sm89
+sm90:
+  aliases: [h100, h200, sm_90, "9.0"]
+  page: hw-target-sm90
+sm100:
+  aliases: [b200, gb200, sm_100, "10.0"]
+  page: hw-target-sm100
+sm103:
+  aliases: [b300, gb300, sm_103, "10.3"]
+  page: hw-target-sm103
+sm110:
+  aliases: [thor, agx thor, jetson thor, jetson agx thor, nvidia thor, sm_110, "11.0"]
+  page: hw-target-sm110

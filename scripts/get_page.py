@@ -4,7 +4,7 @@
 Usage:
     get_page.py kernel-flash-attention-4         # by id
     get_page.py pr-cutlass-2472                   # by id
-    get_page.py wiki/kernels/flash-attention-4.md # by path
+    get_page.py wiki/architectures/sm100/flash-attention-4.md # by path
     get_page.py kernel-flash-attention-4 --body-only
     get_page.py kernel-flash-attention-4 --frontmatter-only
     get_page.py kernel-flash-attention-4 --follow-sources  # also print first 500 chars of each source
@@ -19,6 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from _yaml_compat import yaml  # noqa: E402
 
 from _wiki_root import WIKI_ROOT  # noqa: E402
+from target_routing import applicable_to, resolve_target  # noqa: E402
 
 
 def find_page(lookup):
@@ -129,6 +130,7 @@ def _resolve_artifact_dir(page_path, fm):
 def main():
     parser = argparse.ArgumentParser(description="Get a wiki page by id or path")
     parser.add_argument("lookup", help="Page id (e.g. kernel-flash-attention-4) or relative path")
+    parser.add_argument("--target", help="Reject wiki guidance outside the selected device route; sources remain readable evidence")
     parser.add_argument("--body-only", action="store_true", help="Print only the body (skip frontmatter)")
     parser.add_argument("--frontmatter-only", action="store_true", help="Print only the frontmatter as YAML")
     parser.add_argument("--follow-sources", action="store_true", help="Also print 500-char excerpt from each cited source")
@@ -142,6 +144,16 @@ def main():
 
     content = page_path.read_text(encoding="utf-8")
     fm, body = split_frontmatter(content)
+    if args.target:
+        if resolve_target(args.target) is None:
+            print(f"Unknown device target {args.target!r}: portable principles and explicitly "
+                  "labeled source evidence only.", file=sys.stderr)
+        if fm and fm.get("type") and not applicable_to(fm, args.target):
+            print(f"ERROR: {args.lookup!r} is not reviewed guidance for {args.target!r}; "
+                  "use query.py --target, or omit --target for an explicit comparison.", file=sys.stderr)
+            sys.exit(2)
+        if not (fm and fm.get("type")):
+            print("Source evidence only: inclusion does not establish target compatibility.", file=sys.stderr)
 
     if args.frontmatter_only:
         if fm:
@@ -160,7 +172,7 @@ def main():
     if args.follow_sources and fm and "sources" in fm:
         print()
         print("---")
-        print("## Cited Sources (excerpts)")
+        print("## Cited Sources (excerpts; evidence, not target compatibility)")
         print()
         for src_id in fm.get("sources", []):
             src_page = find_page(src_id)
@@ -182,6 +194,11 @@ def main():
             suffix = " (conventional path — artifact_dir not backfilled)" if is_fallback else ""
             print(f"## Artifact Bundle: `{ad}`{suffix}")
             print()
+            if args.target:
+                print("> **Unfiltered source/comparison evidence:** files below come from the complete")
+                print("> artifact bundle. They are not filtered for the selected target and")
+                print("> do not establish target compatibility; other architectures may be present.")
+                print()
             # Phase 3 source + metadata extensions. Must cover every ext the
             # fetch/extract/collect scripts actually produce — notably .inl
             # (CUTLASS header snippets), .cxx / .cc (alt C++ extensions), and

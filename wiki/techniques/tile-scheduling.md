@@ -2,14 +2,14 @@
 id: technique-tile-scheduling
 title: "Tile Scheduling Strategies"
 type: technique
-architectures: [sm100, sm90]
-tags: [tile-scheduling, clc, persistent-kernel]
+architectures: []
+applicable_to: [portable]
+tags: [tile-scheduling, persistent-kernel]
 confidence: source-reported
 reproducibility: snippet
-prerequisites: [hw-clc]
-related: [hw-clc, technique-persistent-kernels, pattern-low-sm-utilization]
-sources: [doc-ptx-isa-sm100, doc-cutlass-blackwell, doc-cutlass-cute-dsl]
-blackwell_relevance: "SM100 CLC permits a running cluster to acquire an ID from a not-yet-launched cluster; raster order and locality remain software scheduling choices."
+prerequisites: []
+related: [technique-persistent-kernels, pattern-low-sm-utilization, technique-sm100-persistent-kernels]
+sources: [doc-cuda-portable-practices]
 ---
 
 # Tile scheduling strategies
@@ -30,9 +30,12 @@ __device__ TileCoord row_major_tile(int linear_id, int tiles_n) {
 
 A blocked or swizzled raster may improve locality when nearby tiles reuse A or B data, but the useful order depends on matrix layout, tile shape, cache residency, cluster shape, and traversal direction. It cannot be assigned a fixed cache-hit improvement without a benchmark.
 
-## Persistent scheduling and CLC
+## Persistent scheduling
 
-A software persistent scheduler repeatedly maps acquired IDs to work. On SM100, CLC can let a running cluster cancel one not-yet-launched cluster from the same grid and inherit its first CTA ID. This is not an arbitrary hardware tile queue: the launch grid and the program’s ID-to-tile mapping still define the work domain.
+A software persistent scheduler repeatedly maps acquired IDs to work. The
+launch grid and the program's ID-to-tile mapping still define the work domain;
+target-specific acquisition mechanisms must preserve exactly-once coverage.
+The SM100 CLC realization remains in the target-specific persistent-kernel page.
 
 ## Selection checks
 

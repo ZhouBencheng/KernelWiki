@@ -25,7 +25,7 @@ claims:
     last_verified_release: "3.7.1"
     last_verified_at: 2026-08-18
     applies_to:
-      - wiki/languages/triton-blackwell.md
+      - wiki/architectures/sm100/triton.md
       - references/primer.md
       - references/examples.md
       - data/inclusion-policy.yaml::triton.description
@@ -33,15 +33,14 @@ claims:
       - doc-triton-3.6-blackwell
       - pr-vllm-34597
       - pr-sglang-22079
-      - pr-sglang-21019
     notes: |
       Tracks the claim that Triton 3.6 contains Blackwell TMEM, tcgen05,
       warp-specialization, scaled-MMA, and initial multi-CTA infrastructure.
       The official release notes establish compiler capability. Retained
       downstream anchors pr-vllm-34597 and pr-sglang-22079 demonstrate real
-      tl.dot kernels on SM100 paths; pr-sglang-21019 demonstrates an SM100
-      Triton memory-rearrangement kernel but not MMA lowering. These sources
-      do not prove a particular instruction form or performance for every
-      tl.dot shape. The 3.7.0 and 3.7.1 release records were checked on
+      tl.dot kernels on SM100 paths. The H200-only pr-sglang-21019 source is
+      intentionally outside this Blackwell capability claim. These sources do
+      not prove a particular instruction form or performance for every tl.dot
+      shape. The 3.7.0 and 3.7.1 release records were checked on
       2026-08-18 for continuity; the capability provenance remains the 3.6
       release where these features were introduced.

@@ -6,14 +6,14 @@ The scanner covers tracked Markdown/YAML plus current untracked in-scope Markdow
 
 ## Summary
 
-- Total candidate occurrences: 3812
-- Current candidate occurrences: 1864
+- Total candidate occurrences: 3808
+- Current candidate occurrences: 1860
 - Baseline-only retained-in-ledger occurrences: 1948
 - Material occurrences (including removed/corrected history): 3069
 - supported: 1121
 - corrected: 2
 - removed: 1946
-- non-material: 743
+- non-material: 739
 - UNRESOLVED: 0
 
 ## Dispositions
@@ -1970,9 +1970,9 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | comparison-base | `wiki/techniques/warp-specialization.md:63` | `16 warps` | removed | BASE-REMOVED: baseline-only occurrence absent from current worktree; page removed for scope or claim removed during factual correction |
 | comparison-base | `wiki/techniques/warp-specialization.md:63` | `512 threads` | removed | BASE-REMOVED: baseline-only occurrence absent from current worktree; page removed for scope or claim removed during factual correction |
 | comparison-base | `wiki/techniques/warp-specialization.md:251` | `2-SM` | removed | BASE-REMOVED: baseline-only occurrence absent from current worktree; page removed for scope or claim removed during factual correction |
-| current | `index.md:54` | `1613 TFLOPS` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Kernel Case Studies |
-| current | `index.md:55` | `1550 TFLOPS` | supported | https://github.com/deepseek-ai/DeepGEMM; exact normalized occurrence in fetched authoritative source; context: Kernel Case Studies |
-| current | `index.md:57` | `9x` | supported | https://arxiv.org/abs/2502.11089; paper Figure 6 discussion, forward at sequence length 64k; numeric precision is not stated; context: Kernel Case Studies |
+| current | `index.md:57` | `1613 TFLOPS` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Kernel Case Studies |
+| current | `index.md:58` | `1550 TFLOPS` | supported | https://github.com/deepseek-ai/DeepGEMM; exact normalized occurrence in fetched authoritative source; context: Kernel Case Studies |
+| current | `index.md:60` | `9x` | supported | https://arxiv.org/abs/2502.11089; paper Figure 6 discussion, forward at sequence length 64k; numeric precision is not stated; context: Kernel Case Studies |
 | current | `queries/by-architecture.md:31` | `2-bit` | supported | https://github.com/vllm-project/vllm/pull/38479; https://github.com/vllm-project/vllm/pull/38479 (upstream PR title); context: auto-generated link text |
 | current | `queries/by-architecture.md:74` | `256-bit` | supported | https://github.com/sgl-project/sglang/pull/19794; https://github.com/sgl-project/sglang/pull/19794 (upstream PR title); context: auto-generated link text |
 | current | `queries/by-architecture.md:82` | `256bit` | supported | https://github.com/vllm-project/vllm/pull/33022; https://github.com/vllm-project/vllm/pull/33022 (upstream PR title); context: auto-generated link text |
@@ -1985,50 +1985,50 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `queries/by-architecture.md:403` | `3x` | supported | https://github.com/vllm-project/vllm/pull/16173; https://github.com/vllm-project/vllm/pull/16173 (upstream PR title); context: auto-generated link text |
 | current | `queries/by-architecture.md:470` | `2.4%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
 | current | `queries/by-architecture.md:470` | `~5.7%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:609` | `3%` | supported | https://github.com/Dao-AILab/flash-attention/pull/2488; https://github.com/Dao-AILab/flash-attention/pull/2488 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:609` | `9%` | supported | https://github.com/Dao-AILab/flash-attention/pull/2488; https://github.com/Dao-AILab/flash-attention/pull/2488 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:610` | `2CTA` | supported | https://github.com/Dao-AILab/flash-attention/pull/2489; https://github.com/Dao-AILab/flash-attention/pull/2489 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:665` | `10-40%` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2327; https://github.com/flashinfer-ai/flashinfer/pull/2327 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:736` | `2.4×` | supported | https://github.com/sgl-project/sglang/pull/21654; https://github.com/sgl-project/sglang/pull/21654 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:798` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:814` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1115` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1124` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1232` | `128 bit` | supported | https://github.com/pytorch/pytorch/pull/152967; https://github.com/pytorch/pytorch/pull/152967 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1249` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1296` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1298` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1486` | `5.8-18.5%` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1486` | `~1.16x` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1550` | `6%` | supported | https://github.com/vllm-project/vllm/pull/34302; https://github.com/vllm-project/vllm/pull/34302 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1552` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1553` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-architecture.md:1562` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:612` | `3%` | supported | https://github.com/Dao-AILab/flash-attention/pull/2488; https://github.com/Dao-AILab/flash-attention/pull/2488 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:612` | `9%` | supported | https://github.com/Dao-AILab/flash-attention/pull/2488; https://github.com/Dao-AILab/flash-attention/pull/2488 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:613` | `2CTA` | supported | https://github.com/Dao-AILab/flash-attention/pull/2489; https://github.com/Dao-AILab/flash-attention/pull/2489 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:668` | `10-40%` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2327; https://github.com/flashinfer-ai/flashinfer/pull/2327 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:739` | `2.4×` | supported | https://github.com/sgl-project/sglang/pull/21654; https://github.com/sgl-project/sglang/pull/21654 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:801` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:817` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1149` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1158` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1266` | `128 bit` | supported | https://github.com/pytorch/pytorch/pull/152967; https://github.com/pytorch/pytorch/pull/152967 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1283` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1337` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1339` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1531` | `5.8-18.5%` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1531` | `~1.16x` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1595` | `6%` | supported | https://github.com/vllm-project/vllm/pull/34302; https://github.com/vllm-project/vllm/pull/34302 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1597` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1598` | `256-bit` | supported | https://github.com/vllm-project/vllm/pull/34791; https://github.com/vllm-project/vllm/pull/34791 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-architecture.md:1607` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
 | current | `queries/by-hardware-feature.md:8` | `1x` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
 | current | `queries/by-hardware-feature.md:8` | `2CTA` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/10042; https://github.com/NVIDIA/TensorRT-LLM/pull/10042 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:11` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:11` | `2.4%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:11` | `6%` | supported | https://github.com/vllm-project/vllm/pull/34302; https://github.com/vllm-project/vllm/pull/34302 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:11` | `8x` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:11` | `~5.7%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `10-40%` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2327; https://github.com/flashinfer-ai/flashinfer/pull/2327 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `1x` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/11899; https://github.com/NVIDIA/TensorRT-LLM/pull/11899 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `2-bit` | supported | https://arxiv.org/abs/2512.02189v3; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `20-28%` | supported | https://github.com/sgl-project/sglang/pull/4215; https://github.com/sgl-project/sglang/pull/4215 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `4x` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/13740; https://github.com/NVIDIA/TensorRT-LLM/pull/13740 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `5.8-18.5%` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:13` | `~1.16x` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2838; https://github.com/flashinfer-ai/flashinfer/pull/2838 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:15` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:16` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:16` | `2.4%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:16` | `6%` | supported | https://github.com/vllm-project/vllm/pull/34302; https://github.com/vllm-project/vllm/pull/34302 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:16` | `~5.7%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:18` | `10-40%` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2327; https://github.com/flashinfer-ai/flashinfer/pull/2327 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:18` | `2CTA` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:19` | `2CTA` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/10042; https://github.com/NVIDIA/TensorRT-LLM/pull/10042 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:19` | `5.8-18.5%` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
-| current | `queries/by-hardware-feature.md:19` | `~1.16x` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2838; https://github.com/flashinfer-ai/flashinfer/pull/2838 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:12` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:12` | `2.4%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:12` | `6%` | supported | https://github.com/vllm-project/vllm/pull/34302; https://github.com/vllm-project/vllm/pull/34302 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:12` | `8x` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:12` | `~5.7%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `10-40%` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2327; https://github.com/flashinfer-ai/flashinfer/pull/2327 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `1x` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/11899; https://github.com/NVIDIA/TensorRT-LLM/pull/11899 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `2-bit` | supported | https://arxiv.org/abs/2512.02189v3; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `20-28%` | supported | https://github.com/sgl-project/sglang/pull/4215; https://github.com/sgl-project/sglang/pull/4215 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `28.9%` | supported | https://github.com/vllm-project/vllm/pull/40408; https://github.com/vllm-project/vllm/pull/40408 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `4x` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/13740; https://github.com/NVIDIA/TensorRT-LLM/pull/13740 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `5.8-18.5%` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:14` | `~1.16x` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2838; https://github.com/flashinfer-ai/flashinfer/pull/2838 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:17` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:18` | `0.5%` | supported | https://github.com/vllm-project/vllm/pull/34758; https://github.com/vllm-project/vllm/pull/34758 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:18` | `2.4%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:18` | `6%` | supported | https://github.com/vllm-project/vllm/pull/34302; https://github.com/vllm-project/vllm/pull/34302 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:18` | `~5.7%` | supported | https://github.com/vllm-project/vllm/pull/42774; https://github.com/vllm-project/vllm/pull/42774 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:20` | `10-40%` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2327; https://github.com/flashinfer-ai/flashinfer/pull/2327 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:20` | `2CTA` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:21` | `2CTA` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/10042; https://github.com/NVIDIA/TensorRT-LLM/pull/10042 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:21` | `5.8-18.5%` | supported | https://github.com/sgl-project/sglang/pull/25532; https://github.com/sgl-project/sglang/pull/25532 (upstream PR title); context: auto-generated link text |
+| current | `queries/by-hardware-feature.md:21` | `~1.16x` | supported | https://github.com/flashinfer-ai/flashinfer/pull/2838; https://github.com/flashinfer-ai/flashinfer/pull/2838 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
 | current | `queries/by-hardware-feature.md:20` | `2CTA` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: auto-generated link text |
 | current | `queries/by-kernel-type.md:7` | `1x` | supported | https://github.com/NVIDIA/TensorRT-LLM/pull/13628; https://github.com/NVIDIA/TensorRT-LLM/pull/13628 (upstream PR title); context: auto-generated link text |
 | current | `queries/by-kernel-type.md:7` | `2-bit` | supported | https://github.com/vllm-project/vllm/pull/35219; https://github.com/vllm-project/vllm/pull/35219 (PR description); local upstream-excerpt sentinel; context: auto-generated link text |
@@ -2133,8 +2133,8 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `references/primer.md:56` | `~1550 TFLOPS` | supported | https://github.com/deepseek-ai/DeepGEMM; exact normalized occurrence in fetched authoritative source; context: Kernel Case Studies |
 | current | `references/primer.md:58` | `22.392 µs` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Introduction and Final Result; context: Kernel Case Studies |
 | current | `references/primer.md:65` | `9×` | supported | https://arxiv.org/abs/2502.11089; paper Figure 6 discussion, forward at sequence length 64k; numeric precision is not stated; context: Kernel Case Studies |
-| current | `references/primer.md:91` | `2CTA` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Languages / DSLs |
-| current | `references/primer.md:144` | `2CTA` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Canonical Aliases (normalization cheat sheet) |
+| current | `references/primer.md:92` | `2CTA` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Languages / DSLs |
+| current | `references/primer.md:145` | `2CTA` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Canonical Aliases (normalization cheat sheet) |
 | current | `sources/blogs/amandeep-nvfp4-attempts.md:20` | `16 elements` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; exact normalized occurrence in fetched authoritative source; context: Twelve Attempts at an FP4 Kernel |
 | current | `sources/blogs/amandeep-nvfp4-attempts.md:40` | `25%` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; exact normalized occurrence in fetched authoritative source; context: Reported negative experiments |
 | current | `sources/blogs/amandeep-nvfp4-attempts.md:42` | `55%` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; exact normalized occurrence in fetched authoritative source; context: Reported negative experiments |
@@ -3032,68 +3032,66 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `sources/prs/vllm/PR-42899.md:81` | `5.32x` | supported | PR-BODY: numeric token present in the deterministic verbatim PR excerpt |
 | current | `sources/prs/vllm/PR-42899.md:82` | `6.40x` | supported | PR-BODY: numeric token present in the deterministic verbatim PR excerpt |
 | current | `sources/prs/vllm/PR-7174.md:123` | `~75%` | supported | PR-BODY: numeric token present in the deterministic verbatim PR excerpt |
-| current | `wiki/hardware/2sm-cooperative.md:10` | `2CTA` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: document/frontmatter |
-| current | `wiki/hardware/clc.md:33` | `16-byte` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: PTX protocol |
-| current | `wiki/hardware/nvfp4.md:22` | `7-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: NVFP4 and block-scaled narrow precision |
-| current | `wiki/hardware/nvfp4.md:37` | `4×` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: NVFP4 and block-scaled narrow precision |
-| current | `wiki/hardware/tcgen05-mma.md:27` | `32-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Operand and issue model |
-| current | `wiki/hardware/tcgen05-mma.md:39` | `4-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Instruction kinds |
-| current | `wiki/hardware/tcgen05-mma.md:43` | `128-byte` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Shared-memory layouts |
-| current | `wiki/hardware/tmem.md:21` | `32 columns` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Allocation contract |
-| current | `wiki/hardware/tmem.md:25` | `128 lanes` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Allocation contract |
-| current | `wiki/kernels/deepgemm.md:66` | `1550 TFLOPS` | supported | https://github.com/deepseek-ai/DeepGEMM; exact normalized occurrence in fetched authoritative source; context: Performance boundary |
-| current | `wiki/kernels/flash-attention-4.md:19` | `71%` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: document/frontmatter |
-| current | `wiki/kernels/flash-attention-4.md:43` | `1.3×` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
-| current | `wiki/kernels/flash-attention-4.md:43` | `1605 TFLOPS` | supported | https://tridao.me/blog/2026/flash4/; exact normalized occurrence in fetched authoritative source; context: Reported performance |
-| current | `wiki/kernels/flash-attention-4.md:43` | `1613 TFLOPS` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
-| current | `wiki/kernels/flash-attention-4.md:43` | `2.7×` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
-| current | `wiki/kernels/flash-attention-4.md:43` | `71%` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
-| current | `wiki/kernels/flashmla.md:58` | `656 bytes` | supported | https://github.com/deepseek-ai/FlashMLA; exact normalized occurrence in fetched authoritative source; context: Layout and benchmark boundaries |
-| current | `wiki/kernels/flashmla.md:62` | `1460 TFLOPS` | supported | https://github.com/deepseek-ai/FlashMLA; exact normalized occurrence in fetched authoritative source; context: Layout and benchmark boundaries |
+| current | `wiki/architectures/sm100/2sm-cooperative.md:10` | `2CTA` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: document/frontmatter |
+| current | `wiki/hardware/clc.md:34` | `16-byte` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: PTX protocol |
+| current | `wiki/architectures/sm100/nvfp4.md:23` | `7-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: NVFP4 and block-scaled narrow precision |
+| current | `wiki/architectures/sm100/nvfp4.md:38` | `4×` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: NVFP4 and block-scaled narrow precision |
+| current | `wiki/architectures/sm100/tcgen05-mma.md:28` | `32-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Operand and issue model |
+| current | `wiki/architectures/sm100/tcgen05-mma.md:40` | `4-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Instruction kinds |
+| current | `wiki/architectures/sm100/tcgen05-mma.md:44` | `128-byte` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Shared-memory layouts |
+| current | `wiki/architectures/sm100/tmem.md:22` | `32 columns` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Allocation contract |
+| current | `wiki/architectures/sm100/tmem.md:26` | `128 lanes` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Allocation contract |
+| current | `wiki/kernels/deepgemm.md:67` | `1550 TFLOPS` | supported | https://github.com/deepseek-ai/DeepGEMM; exact normalized occurrence in fetched authoritative source; context: API and performance boundaries |
+| current | `wiki/architectures/sm100/flash-attention-4.md:19` | `71%` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: document/frontmatter |
+| current | `wiki/architectures/sm100/flash-attention-4.md:44` | `1.3×` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
+| current | `wiki/architectures/sm100/flash-attention-4.md:44` | `1605 TFLOPS` | supported | https://tridao.me/blog/2026/flash4/; exact normalized occurrence in fetched authoritative source; context: Reported performance |
+| current | `wiki/architectures/sm100/flash-attention-4.md:44` | `1613 TFLOPS` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
+| current | `wiki/architectures/sm100/flash-attention-4.md:44` | `2.7×` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
+| current | `wiki/architectures/sm100/flash-attention-4.md:44` | `71%` | supported | https://arxiv.org/abs/2603.05451; exact normalized occurrence in fetched authoritative source; context: Reported performance |
+| current | `wiki/kernels/flashmla.md:73` | `656 bytes` | supported | https://github.com/deepseek-ai/FlashMLA; exact normalized occurrence in fetched authoritative source; context: Layout and benchmark boundaries |
+| current | `wiki/kernels/flashmla.md:78` | `1460 TFLOPS` | supported | https://github.com/deepseek-ai/FlashMLA; exact normalized occurrence in fetched authoritative source; context: Layout and benchmark boundaries |
 | current | `wiki/kernels/fp8-block-scale-gemm.md:54` | `1550 TFLOPS` | supported | https://github.com/deepseek-ai/DeepGEMM; exact normalized occurrence in fetched authoritative source; context: FP8 block-scale GEMM |
 | current | `wiki/kernels/nsa.md:42` | `9.0x` | supported | https://arxiv.org/abs/2502.11089; paper Figure 6 discussion, forward at sequence length 64k; numeric precision is not stated; context: Reported performance |
 | current | `wiki/kernels/nsa.md:43` | `6.0x` | supported | https://arxiv.org/abs/2502.11089; paper Figure 6 discussion, backward at sequence length 64k; numeric precision is not stated; context: Reported performance |
 | current | `wiki/kernels/nsa.md:44` | `11.6x` | supported | https://arxiv.org/abs/2502.11089; paper Table 4 Expected Speedup row, 65536-context column, referenced in §5.2 Decoding Speed; context: Reported performance |
-| current | `wiki/kernels/nvfp4-gemv.md:47` | `22.392 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Introduction and Final Result; context: NVFP4 batched GEMV |
-| current | `wiki/kernels/sparse-mla.md:47` | `1450 TFLOPS` | supported | https://github.com/deepseek-ai/FlashMLA; exact normalized occurrence in fetched authoritative source; context: Sparse MLA |
-| current | `wiki/languages/cuda-cpp.md:38` | `32-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Inline-PTX review checklist |
-| current | `wiki/languages/cute-dsl.md:53` | `2CTA` | supported | https://docs.nvidia.com/cutlass/latest/CHANGELOG.html; exact normalized occurrence in fetched authoritative source; context: Full Examples (verbatim upstream code shipped locally) |
-| current | `wiki/languages/cute-dsl.md:62` | `2CTA` | supported | https://docs.nvidia.com/cutlass/latest/CHANGELOG.html; exact normalized occurrence in fetched authoritative source; context: Full Examples (verbatim upstream code shipped locally) |
-| current | `wiki/patterns/pipeline-stalls.md:57` | `62.4%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 939.61 / 1506.74; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/pipeline-stalls.md:57` | `939.61 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v3 row; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/pipeline-stalls.md:58` | `1208.83 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Closing performance table, v4 row; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/pipeline-stalls.md:58` | `80.2%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 1208.83 / 1506.74; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/pipeline-stalls.md:59` | `1302.29 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Closing performance table, v5 row; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/pipeline-stalls.md:59` | `86.4%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 1302.29 / 1506.74; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/pipeline-stalls.md:60` | `1475.93 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Closing performance table, v6 row; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/pipeline-stalls.md:60` | `98.0%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 1475.93 / 1506.74; context: Example Progression (tcgen05 tutorial) |
-| current | `wiki/patterns/register-pressure.md:27` | `128 lanes` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Candidate responses |
-| current | `wiki/patterns/register-pressure.md:27` | `32-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Candidate responses |
-| current | `wiki/patterns/register-pressure.md:27` | `512 columns` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Candidate responses |
-| current | `wiki/patterns/tail-effect.md:16` | `146 SMs` | supported | local CUDA Driver API observation plus stated arithmetic; 150 - 148 = 2 final-wave CTAs, hence 148 - 2 = 146 idle SMs under the page's assumption; context: Tail effect |
-| current | `wiki/patterns/tail-effect.md:16` | `148 CTAs` | supported | local CUDA Driver API observation plus stated arithmetic; first wave equals the observed 148 B200 multiprocessors under the page's assumption; context: Tail effect |
-| current | `wiki/patterns/tail-effect.md:16` | `148 SMs` | supported | https://arxiv.org/abs/2512.02189v3; exact normalized occurrence in fetched authoritative source; context: Tail effect |
-| current | `wiki/patterns/tail-effect.md:16` | `150-CTA` | supported | local CUDA Driver API observation plus stated arithmetic; 150-task worked example under the explicitly stated one-resident-CTA-per-SM assumption; context: Tail effect |
-| current | `wiki/techniques/cache-policy.md:21` | `27 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 3 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
-| current | `wiki/techniques/cache-policy.md:21` | `27-microsecond` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 3 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
-| current | `wiki/techniques/cache-policy.md:21` | `39 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 2 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
-| current | `wiki/techniques/cache-policy.md:21` | `443 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 1 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
-| current | `wiki/techniques/cache-policy.md:33` | `16-byte` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; exact normalized occurrence in fetched authoritative source; context: Evaluation procedure |
-| current | `wiki/techniques/persistent-kernels.md:56` | `939.61 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v3 row; context: Choosing between static and CLC scheduling |
-| current | `wiki/techniques/pipeline-stages.md:21` | `35%` | supported | https://gau-nernst.github.io/tcgen05/; rounded local comparison of cited v2b and v3 rows (939.61 / 695.43 = 1.35), matching the tutorial's own 35% statement; context: Source-reported tutorial step |
-| current | `wiki/techniques/pipeline-stages.md:21` | `695.43 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v2b row; context: Source-reported tutorial step |
-| current | `wiki/techniques/pipeline-stages.md:21` | `939.61 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v3 row; context: Source-reported tutorial step |
-| current | `wiki/techniques/pipeline-stages.md:33` | `85%` | supported | https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-3-the-optimizations-behind-85-of-sota-performance; exact normalized occurrence in fetched authoritative source; context: Choosing a stage count |
-| current | `wiki/techniques/vectorized-loads.md:25` | `2000 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; naive CUDA timing reported in the optimization journey; context: NVFP4 GEMV evidence |
-| current | `wiki/techniques/vectorized-loads.md:26` | `443 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 1 heading and summary table; context: NVFP4 GEMV evidence |
-| current | `wiki/techniques/vectorized-loads.md:27` | `39 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 2 heading and summary table; context: NVFP4 GEMV evidence |
-| current | `wiki/techniques/vectorized-loads.md:28` | `27 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 3 heading and summary table; context: NVFP4 GEMV evidence |
-| current | `wiki/techniques/vectorized-loads.md:29` | `22.392 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Introduction and Final Result; context: NVFP4 GEMV evidence |
-| current | `wiki/techniques/vectorized-loads.md:31` | `26.7 microseconds` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; largest-shape row in the article's CUDA versus speed-of-light table; context: NVFP4 GEMV evidence |
-| current | `wiki/techniques/vectorized-loads.md:31` | `8.6-microsecond` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; Speed of Light table, M=7168 K=16384 L=1 row; context: NVFP4 GEMV evidence |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:54` | `22.392 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Introduction and Final Result; context: NVFP4 batched GEMV |
+| current | `wiki/kernels/sparse-mla.md:56` | `1450 TFLOPS` | supported | https://github.com/deepseek-ai/FlashMLA; exact normalized occurrence in fetched authoritative source; context: Sparse MLA |
+| current | `wiki/architectures/sm100/cuda-cpp.md:39` | `32-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Inline-PTX review checklist |
+| current | `wiki/architectures/sm100/cute-dsl.md:54` | `2CTA` | supported | https://docs.nvidia.com/cutlass/latest/CHANGELOG.html; exact normalized occurrence in fetched authoritative source; context: Full Examples (verbatim upstream code shipped locally) |
+| current | `wiki/architectures/sm100/cute-dsl.md:63` | `2CTA` | supported | https://docs.nvidia.com/cutlass/latest/CHANGELOG.html; exact normalized occurrence in fetched authoritative source; context: Full Examples (verbatim upstream code shipped locally) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:20` | `62.4%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 939.61 / 1506.74; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:20` | `939.61 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v3 row; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:21` | `1208.83 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Closing performance table, v4 row; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:21` | `80.2%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 1208.83 / 1506.74; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:22` | `1302.29 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Closing performance table, v5 row; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:22` | `86.4%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 1302.29 / 1506.74; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:22` | `1475.93 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Closing performance table, v6 row; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:23` | `98.0%` | supported | https://gau-nernst.github.io/tcgen05/; local percentage of the cited cuBLAS row, 1475.93 / 1506.74; context: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/pattern-register-pressure.md:20` | `128 lanes` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Candidate responses |
+| current | `wiki/architectures/sm100/pattern-register-pressure.md:20` | `32-bit` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Candidate responses |
+| current | `wiki/architectures/sm100/pattern-register-pressure.md:20` | `512 columns` | supported | https://docs.nvidia.com/cuda/parallel-thread-execution/; exact normalized occurrence in fetched authoritative source; context: Candidate responses |
+| current | `wiki/architectures/sm100/pattern-tail-effect.md:18` | `146 SMs` | supported | local CUDA Driver API observation plus stated arithmetic; 150 - 148 = 2 final-wave CTAs, hence 148 - 2 = 146 idle SMs under the page's assumption; context: Tail effect |
+| current | `wiki/architectures/sm100/pattern-tail-effect.md:18` | `148 CTAs` | supported | local CUDA Driver API observation plus stated arithmetic; first wave equals the observed 148 B200 multiprocessors under the page's assumption; context: Tail effect |
+| current | `wiki/architectures/sm100/pattern-tail-effect.md:16` | `148 SMs` | supported | https://arxiv.org/abs/2512.02189v3; exact normalized occurrence in fetched authoritative source; context: Tail effect |
+| current | `wiki/architectures/sm100/pattern-tail-effect.md:17` | `150-CTA` | supported | local CUDA Driver API observation plus stated arithmetic; 150-task worked example under the explicitly stated one-resident-CTA-per-SM assumption; context: Tail effect |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:53` | `27 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 3 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:57` | `27-microsecond` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 3 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:52` | `39 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 2 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:51` | `443 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 1 heading and summary table; context: Evidence from the NVFP4 GEMV writeup |
+| current | `wiki/architectures/sm100/cache-policy.md:18` | `16-byte` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; exact normalized occurrence in fetched authoritative source; context: Evaluation procedure |
+| current | `wiki/architectures/sm100/persistent-kernels.md:57` | `939.61 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v3 row; context: Choosing between static and CLC scheduling |
+| current | `wiki/architectures/sm100/pipeline-stages.md:22` | `35%` | supported | https://gau-nernst.github.io/tcgen05/; rounded local comparison of cited v2b and v3 rows (939.61 / 695.43 = 1.35), matching the tutorial's own 35% statement; context: Source-reported tutorial step |
+| current | `wiki/architectures/sm100/pipeline-stages.md:22` | `695.43 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v2b row; context: Source-reported tutorial step |
+| current | `wiki/architectures/sm100/pipeline-stages.md:22` | `939.61 TFLOPS` | supported | https://gau-nernst.github.io/tcgen05/; Performance table, v3 row; context: Source-reported tutorial step |
+| current | `wiki/architectures/sm100/pipeline-stages.md:34` | `85%` | supported | https://www.modular.com/blog/matrix-multiplication-on-nvidias-blackwell-part-3-the-optimizations-behind-85-of-sota-performance; exact normalized occurrence in fetched authoritative source; context: Choosing a stage count |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:50` | `2000 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; naive CUDA timing reported in the optimization journey; context: NVFP4 GEMV evidence |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:51` | `443 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 1 heading and summary table; context: NVFP4 GEMV evidence |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:52` | `39 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 2 heading and summary table; context: NVFP4 GEMV evidence |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:53` | `27 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Optimization 3 heading and summary table; context: NVFP4 GEMV evidence |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:54` | `22.392 microseconds` | supported | https://yue-zhang-2025.github.io/2025/12/02/blackwell-nvfp4-kernel-hackathon-journey.html; Introduction and Final Result; context: NVFP4 GEMV evidence |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:58` | `26.7 microseconds` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; largest-shape row in the article's CUDA versus speed-of-light table; context: NVFP4 GEMV evidence |
+| current | `wiki/architectures/sm100/nvfp4-gemv.md:59` | `8.6-microsecond` | supported | https://amandeepsp.github.io/blog/nvfp4-blackwell-gemv/; Speed of Light table, M=7168 K=16384 L=1 row; context: NVFP4 GEMV evidence |
 | current | `CLAUDE.md:104` | `71%` | non-material | NON-MATERIAL: Performance Claim Format |
-| current | `SKILL.md:3` | `2-SM` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `SKILL.md:16` | `2-SM` | non-material | NON-MATERIAL: When To Use This Skill |
 | current | `candidates/cccl-cub.yaml:4082` | `4Gb` | non-material | NON-MATERIAL: document/frontmatter |
 | current | `candidates/cccl-cub.yaml:6680` | `256 threads` | non-material | NON-MATERIAL: document/frontmatter |
 | current | `candidates/cccl-cub.yaml:8370` | `16 bytes` | non-material | NON-MATERIAL: document/frontmatter |
@@ -3231,36 +3229,34 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `data/plan-supersession-baselines/plan-phase3.body.md:368` | `60 MiB` | non-material | NON-MATERIAL: Default Resolutions (previously considered for user input; may be overridden) |
 | current | `data/plan-supersession-baselines/plan-phase3.body.md:398` | `5 MiB` | non-material | NON-MATERIAL: aggregate > 5 MiB) |
 | current | `data/plan-supersession-baselines/plan-phase3.body.md:409` | `1 MiB` | non-material | NON-MATERIAL: because upstream > 1 MiB |
-| current | `data/tags.yaml:40` | `2sm` | non-material | NON-MATERIAL: The validator (scripts/validate.py) rejects unknown tags. |
+| current | `data/tags.yaml:42` | `2sm` | non-material | NON-MATERIAL: The validator (scripts/validate.py) rejects unknown tags. |
 | current | `data/tool-versions.yaml:52` | `2CTA` | non-material | NON-MATERIAL: flags them as advisory warnings. |
-| current | `index.md:32` | `128-lane` | non-material | NON-MATERIAL: Hardware Features |
-| current | `index.md:32` | `512-column` | non-material | NON-MATERIAL: Hardware Features |
-| current | `index.md:35` | `2sm` | non-material | NON-MATERIAL: Hardware Features |
-| current | `index.md:35` | `2sm` | non-material | NON-MATERIAL: Hardware Features |
+| current | `index.md:38` | `2sm` | non-material | NON-MATERIAL: Hardware Features |
+| current | `index.md:38` | `2sm` | non-material | NON-MATERIAL: Hardware Features |
 | current | `queries/by-architecture.md:31` | `4x` | non-material | NON-MATERIAL: Ampere family-only |
 | current | `queries/by-architecture.md:84` | `4x` | non-material | NON-MATERIAL: Hopper family-only |
 | current | `queries/by-architecture.md:133` | `4x` | non-material | NON-MATERIAL: Blackwell family-only |
 | current | `queries/by-architecture.md:246` | `8x` | non-material | NON-MATERIAL: Architecture unknown |
-| current | `queries/by-architecture.md:523` | `2CTA` | non-material | NON-MATERIAL: `sm100` |
-| current | `queries/by-architecture.md:550` | `1x` | non-material | NON-MATERIAL: `sm100` |
-| current | `queries/by-architecture.md:761` | `2-SM` | non-material | NON-MATERIAL: `sm100` |
-| current | `queries/by-architecture.md:817` | `2sm` | non-material | NON-MATERIAL: `sm100` |
-| current | `queries/by-architecture.md:817` | `2sm` | non-material | NON-MATERIAL: `sm100` |
-| current | `queries/by-architecture.md:913` | `2sm` | non-material | NON-MATERIAL: `sm100a` |
-| current | `queries/by-architecture.md:913` | `2sm` | non-material | NON-MATERIAL: `sm100a` |
-| current | `queries/by-architecture.md:954` | `2CTA` | non-material | NON-MATERIAL: `sm103` |
-| current | `queries/by-architecture.md:1042` | `1x` | non-material | NON-MATERIAL: `sm120` |
+| current | `queries/by-architecture.md:526` | `2CTA` | non-material | NON-MATERIAL: `sm100` |
+| current | `queries/by-architecture.md:553` | `1x` | non-material | NON-MATERIAL: `sm100` |
+| current | `queries/by-architecture.md:764` | `2-SM` | non-material | NON-MATERIAL: `sm100` |
+| current | `queries/by-architecture.md:820` | `2sm` | non-material | NON-MATERIAL: `sm100` |
+| current | `queries/by-architecture.md:820` | `2sm` | non-material | NON-MATERIAL: `sm100` |
+| current | `queries/by-architecture.md:926` | `2sm` | non-material | NON-MATERIAL: `sm100a` |
+| current | `queries/by-architecture.md:926` | `2sm` | non-material | NON-MATERIAL: `sm100a` |
+| current | `queries/by-architecture.md:971` | `2CTA` | non-material | NON-MATERIAL: `sm103` |
+| current | `queries/by-architecture.md:1076` | `1x` | non-material | NON-MATERIAL: `sm120` |
 | current | `queries/by-hardware-feature.md:7` | `2sm` | non-material | NON-MATERIAL: Query: By Hardware Feature |
 | current | `queries/by-hardware-feature.md:7` | `2sm` | non-material | NON-MATERIAL: Query: By Hardware Feature |
 | current | `queries/by-hardware-feature.md:10` | `2sm` | non-material | NON-MATERIAL: Query: By Hardware Feature |
-| current | `queries/by-hardware-feature.md:13` | `2-SM` | non-material | NON-MATERIAL: Query: By Hardware Feature |
-| current | `queries/by-hardware-feature.md:18` | `2-SM` | non-material | NON-MATERIAL: Query: By Hardware Feature |
-| current | `queries/by-hardware-feature.md:18` | `2sm` | non-material | NON-MATERIAL: Query: By Hardware Feature |
-| current | `queries/by-hardware-feature.md:19` | `2-SM` | non-material | NON-MATERIAL: Query: By Hardware Feature |
+| current | `queries/by-hardware-feature.md:14` | `2-SM` | non-material | NON-MATERIAL: Query: By Hardware Feature |
+| current | `queries/by-hardware-feature.md:20` | `2-SM` | non-material | NON-MATERIAL: Query: By Hardware Feature |
+| current | `queries/by-hardware-feature.md:20` | `2sm` | non-material | NON-MATERIAL: Query: By Hardware Feature |
+| current | `queries/by-hardware-feature.md:21` | `2-SM` | non-material | NON-MATERIAL: Query: By Hardware Feature |
 | current | `queries/by-hardware-feature.md:20` | `2-SM` | non-material | NON-MATERIAL: Query: By Hardware Feature |
 | current | `queries/by-kernel-type.md:14` | `2-SM` | non-material | NON-MATERIAL: Query: By Kernel Type |
 | current | `queries/by-language.md:13` | `2-SM` | non-material | NON-MATERIAL: Query: By Language / DSL |
-| current | `queries/by-problem.md:10` | `2sm` | non-material | NON-MATERIAL: Query: By Problem / Symptom |
+| current | `queries/by-problem.md:16` | `2sm` | non-material | NON-MATERIAL: Query: By Problem / Symptom |
 | current | `queries/by-repo.md:64` | `1x` | non-material | NON-MATERIAL: NVIDIA/TensorRT-LLM |
 | current | `queries/by-repo.md:117` | `2CTA` | non-material | NON-MATERIAL: NVIDIA/TensorRT-LLM |
 | current | `queries/by-repo.md:465` | `8x` | non-material | NON-MATERIAL: flashinfer-ai/flashinfer |
@@ -3278,8 +3274,8 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `references/examples.md:66` | `1613 TFLOPS` | non-material | NON-MATERIAL: Example 4: "Show me the FlashAttention-4 implementation details" |
 | current | `references/examples.md:66` | `71%` | non-material | NON-MATERIAL: Example 4: "Show me the FlashAttention-4 implementation details" |
 | current | `references/examples.md:67` | `2-CTA` | non-material | NON-MATERIAL: Example 4: "Show me the FlashAttention-4 implementation details" |
-| current | `references/examples.md:127` | `22.392 μs` | non-material | NON-MATERIAL: Example 8: "What are the memory-bound kernel optimization tricks on B200?" |
-| current | `references/examples.md:127` | `22.392 μs` | non-material | NON-MATERIAL: Example 8: "What are the memory-bound kernel optimization tricks on B200?" |
+| current | `references/examples.md:128` | `22.392 μs` | non-material | NON-MATERIAL: Example 8: "What are the memory-bound kernel optimization tricks on B200?" |
+| current | `references/examples.md:128` | `22.392 μs` | non-material | NON-MATERIAL: Example 8: "What are the memory-bound kernel optimization tricks on B200?" |
 | current | `references/primer.md:19` | `128-lane` | non-material | NON-MATERIAL: Hardware Features (SM100) |
 | current | `references/primer.md:19` | `32-bit` | non-material | NON-MATERIAL: Hardware Features (SM100) |
 | current | `references/primer.md:19` | `512-column` | non-material | NON-MATERIAL: Hardware Features (SM100) |
@@ -3288,8 +3284,8 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `references/primer.md:22` | `2sm` | non-material | NON-MATERIAL: Hardware Features (SM100) |
 | current | `references/primer.md:59` | `128×` | non-material | NON-MATERIAL: Kernel Case Studies |
 | current | `references/primer.md:59` | `1×` | non-material | NON-MATERIAL: Kernel Case Studies |
-| current | `references/primer.md:144` | `2-SM` | non-material | NON-MATERIAL: Canonical Aliases (normalization cheat sheet) |
-| current | `references/primer.md:144` | `2sm` | non-material | NON-MATERIAL: Canonical Aliases (normalization cheat sheet) |
+| current | `references/primer.md:145` | `2-SM` | non-material | NON-MATERIAL: Canonical Aliases (normalization cheat sheet) |
+| current | `references/primer.md:145` | `2sm` | non-material | NON-MATERIAL: Canonical Aliases (normalization cheat sheet) |
 | current | `references/schema.md:122` | `2sm` | non-material | NON-MATERIAL: wiki-kernel (must have `performance_claims`) |
 | current | `references/schema.md:135` | `71%` | non-material | NON-MATERIAL: wiki-kernel (must have `performance_claims`) |
 | current | `sources/blogs/amandeep-nvfp4-attempts.md:28` | `3.1x` | non-material | NON-MATERIAL: Reported baseline |
@@ -3806,31 +3802,31 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `sources/prs/vllm/PR-42774.md:5` | `2.4%` | non-material | NON-MATERIAL: document/frontmatter |
 | current | `sources/prs/vllm/PR-42774.md:5` | `~5.7%` | non-material | NON-MATERIAL: document/frontmatter |
 | current | `tests/fixtures/ledger-shape-bad.yaml:5` | `2 rows` | non-material | NON-MATERIAL: (1 include + 1 exclude + 0 defer = 2 rows, but |
-| current | `wiki/hardware/2sm-cooperative.md:2` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `wiki/hardware/2sm-cooperative.md:6` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `wiki/hardware/2sm-cooperative.md:10` | `2-SM` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `wiki/hardware/tcgen05-mma.md:8` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `wiki/hardware/tma.md:36` | `128-byte` | non-material | NON-MATERIAL: Swizzling |
-| current | `wiki/hardware/tma.md:36` | `32-byte` | non-material | NON-MATERIAL: Swizzling |
-| current | `wiki/hardware/tma.md:36` | `64-byte` | non-material | NON-MATERIAL: Swizzling |
-| current | `wiki/hardware/tmem.md:15` | `128 lanes` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
-| current | `wiki/hardware/tmem.md:15` | `262,144 bytes` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
-| current | `wiki/hardware/tmem.md:15` | `32-bit` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
-| current | `wiki/hardware/tmem.md:15` | `512 columns` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
-| current | `wiki/kernels/flash-attention-4.md:6` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `wiki/kernels/tensorrt-llm-blackwell-indexer.md:50` | `4 bytes` | non-material | NON-MATERIAL: Shape |
-| current | `wiki/languages/ptx-sm100.md:35` | `32-bit` | non-material | NON-MATERIAL: Representative forms |
-| current | `wiki/migration/wgmma-to-tcgen05.md:23` | `32-bit` | non-material | NON-MATERIAL: Required changes |
-| current | `wiki/migration/wgmma-to-tcgen05.md:27` | `128-byte` | non-material | NON-MATERIAL: Required changes |
-| current | `wiki/migration/wgmma-to-tcgen05.md:32` | `32 lanes` | non-material | NON-MATERIAL: Allocation ownership sketch |
-| current | `wiki/patterns/compute-bound.md:5` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `wiki/patterns/compute-bound.md:7` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `wiki/patterns/compute-bound.md:27` | `2-SM` | non-material | NON-MATERIAL: Candidate Techniques |
-| current | `wiki/patterns/compute-bound.md:27` | `2sm` | non-material | NON-MATERIAL: Candidate Techniques |
-| current | `wiki/patterns/compute-bound.md:42` | `2-SM` | non-material | NON-MATERIAL: Caveats |
-| current | `wiki/patterns/pipeline-stalls.md:59` | `2-SM` | non-material | NON-MATERIAL: Example Progression (tcgen05 tutorial) |
-| current | `wiki/techniques/double-buffering.md:19` | `256-column` | non-material | NON-MATERIAL: Double and multi-buffering |
-| current | `wiki/techniques/register-budgeting.md:38` | `32 registers` | non-material | NON-MATERIAL: Register budgeting |
-| current | `wiki/techniques/software-exp.md:16` | `4 us` | non-material | NON-MATERIAL: Software-Emulated Exponential |
-| current | `wiki/techniques/swizzling.md:19` | `128-byte` | non-material | NON-MATERIAL: Shared Memory Swizzling |
-| current | `wiki/techniques/warp-specialization.md:18` | `16-warp` | non-material | NON-MATERIAL: Warp specialization |
+| current | `wiki/architectures/sm100/2sm-cooperative.md:2` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
+| current | `wiki/architectures/sm100/2sm-cooperative.md:6` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
+| current | `wiki/architectures/sm100/2sm-cooperative.md:10` | `2-SM` | non-material | NON-MATERIAL: document/frontmatter |
+| current | `wiki/architectures/sm100/tcgen05-mma.md:8` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
+| current | `wiki/hardware/tma.md:37` | `128-byte` | non-material | NON-MATERIAL: Swizzling |
+| current | `wiki/hardware/tma.md:37` | `32-byte` | non-material | NON-MATERIAL: Swizzling |
+| current | `wiki/hardware/tma.md:37` | `64-byte` | non-material | NON-MATERIAL: Swizzling |
+| current | `wiki/architectures/sm100/tmem.md:16` | `128 lanes` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
+| current | `wiki/architectures/sm100/tmem.md:16` | `262,144 bytes` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
+| current | `wiki/architectures/sm100/tmem.md:16` | `32-bit` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
+| current | `wiki/architectures/sm100/tmem.md:16` | `512 columns` | non-material | NON-MATERIAL: Tensor Memory (TMEM) |
+| current | `wiki/architectures/sm100/flash-attention-4.md:6` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
+| current | `wiki/architectures/sm100/tensorrt-llm-blackwell-indexer.md:51` | `4 bytes` | non-material | NON-MATERIAL: Shape |
+| current | `wiki/architectures/sm100/ptx.md:36` | `32-bit` | non-material | NON-MATERIAL: Representative forms |
+| current | `wiki/architectures/sm100/wgmma-to-tcgen05.md:24` | `32-bit` | non-material | NON-MATERIAL: Required changes |
+| current | `wiki/architectures/sm100/wgmma-to-tcgen05.md:28` | `128-byte` | non-material | NON-MATERIAL: Required changes |
+| current | `wiki/architectures/sm100/wgmma-to-tcgen05.md:33` | `32 lanes` | non-material | NON-MATERIAL: Allocation ownership sketch |
+| current | `wiki/architectures/sm100/pattern-compute-bound.md:7` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
+| current | `wiki/architectures/sm100/pattern-compute-bound.md:7` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
+| current | `wiki/architectures/sm100/pattern-compute-bound.md:24` | `2-SM` | non-material | NON-MATERIAL: Candidate Techniques |
+| current | `wiki/architectures/sm100/pattern-compute-bound.md:9` | `2sm` | non-material | NON-MATERIAL: Candidate Techniques |
+| current | `wiki/architectures/sm100/pattern-compute-bound.md:24` | `2-SM` | non-material | NON-MATERIAL: Caveats |
+| current | `wiki/architectures/sm100/pattern-pipeline-stalls.md:22` | `2-SM` | non-material | NON-MATERIAL: Example Progression (tcgen05 tutorial) |
+| current | `wiki/architectures/sm100/double-buffering.md:20` | `256-column` | non-material | NON-MATERIAL: Double and multi-buffering |
+| current | `wiki/architectures/sm100/register-budgeting.md:29` | `32 registers` | non-material | NON-MATERIAL: Register budgeting |
+| current | `wiki/architectures/sm100/software-exp.md:17` | `4 us` | non-material | NON-MATERIAL: Software-Emulated Exponential |
+| current | `wiki/architectures/sm100/swizzling.md:30` | `128-byte` | non-material | NON-MATERIAL: Shared Memory Swizzling |
+| current | `wiki/architectures/sm100/warp-specialization.md:36` | `16-warp` | non-material | NON-MATERIAL: Warp specialization |

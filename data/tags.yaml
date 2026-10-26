@@ -33,6 +33,8 @@ architectures:
   - sm89
 
 hardware_features:
+  - cp-async
+  - warp-mma
   - tcgen05
   - tmem
   - tma

@@ -1,50 +1,36 @@
 ---
 id: technique-pipeline-stages
-title: "Software Pipelining and Multi-Stage Buffering"
+title: "Software pipelining and stage ownership"
 type: technique
-architectures: [sm100, sm90]
-tags: [pipeline-stages, double-buffering, tma, mbarrier]
+architectures: []
+applicable_to: [portable]
+tags: [pipeline-stages, double-buffering]
 confidence: source-reported
-reproducibility: snippet
-prerequisites: [hw-tma, hw-tmem]
-related: [technique-warp-specialization, technique-double-buffering, hw-tma]
-sources: [blog-tcgen05-tutorial, blog-modular-blackwell, doc-nvidia-tuning-guide, pr-flashinfer-1039]
-blackwell_relevance: TMA and barriers support producer/consumer overlap; the correct stage count depends on the kernel's tile resources and timings.
+reproducibility: concept
+prerequisites: []
+related: [technique-sm100-pipeline-stages]
+sources: [doc-cuda-portable-practices]
 ---
 
-# Software Pipelining and Multi-Stage Buffering
+# Software pipelining and stage ownership
 
-Software pipelining keeps multiple shared-memory tile buffers in flight so a producer can load a later tile while a consumer performs MMA on an earlier tile. Each buffer stage needs an ownership protocol: the consumer waits for the transfer-complete state, and the producer waits until the consumer releases the stage before reuse.
+Software pipelining overlaps work on different iterations. The consumer must
+wait for data completion, and the producer must wait for all consumers before
+reusing storage. Copy completion and consumer completion are separate events.
 
-## Source-reported tutorial step
+Choose a stage count using bytes per stage, measured producer/consumer time,
+loop length, synchronization cost, occupancy and register pressure. More
+stages can improve overlap but increase storage and prologue/drain overhead.
 
-In the single-B200 GEMM tutorial by Thien Tran (`gau-nernst`), the no-pipeline v2b row reports 695.43 TFLOPS and the pipelined v3 row reports 939.61 TFLOPS, about a 35% increase for that exact benchmark. Later rows add warp specialization, two-SM MMA, and persistent static scheduling, so their gains are not attributed to pipeline staging alone.
+Check zero/short/non-multiple loops and the numerical contract independently
+of performance. A change in barrier phase or stage indexing can deadlock or
+corrupt output. Use the selected architecture's completion primitives; ordinary
+`cp.async` waits, TMA transaction barriers and TMEM lifetime rules are not
+interchangeable. No fixed stage count or B200 speedup is a portable promise.
 
-## Choosing a stage count
+## Select an implementation
 
-There is no universally optimal count. More stages can expose additional overlap but consume more shared memory and barrier state, can reduce residency, and add prologue/epilogue work. Choose the count from:
-
-- bytes of A/B/scale data per stage;
-- available dynamic shared memory after other storage;
-- measured load and MMA duration per tile;
-- K-loop length and reuse frequency;
-- occupancy and register effects of the producer/consumer roles.
-
-The Modular article uses a multi-stage circular buffer as one component of a longer optimization sequence ending at 85% of its stated reference. That final percentage is not a pipeline-only result.
-
-## Correctness checks
-
-Validate phase transitions, expected transaction bytes, and buffer reuse with short and non-multiple K loops as well as the steady state. An off-by-one barrier phase can be a correctness bug or deadlock, and a stage-count change must not be treated as a performance-only edit.
-
-FlashInfer PR 1039 provides a concrete producer/consumer sequence. This
-contiguous excerpt from its captured SM100 attention mainloop is illustrative,
-not a standalone kernel:
-
-```cpp
-pipeline_q.consumer_wait(pipeline_q_consumer_state);
-++pipeline_q_consumer_state;
-pipeline_s0.producer_acquire(pipeline_s0_producer_state);
-gemm_zero_acc(mma_qk, tSrQ0, tSrK(_, _, _, k_index), tStS0);
-pipeline_s0.producer_commit(pipeline_s0_producer_state);
-++pipeline_s0_producer_state;
-```
+Read the selected architecture entry using `query.py --target <device>`.
+The [SM100 implementation](../architectures/sm100/pipeline-stages.md) preserves the
+original excerpts and performance evidence. Open it only for SM100 or an
+explicit cross-architecture comparison, not as a recipe for another device.
