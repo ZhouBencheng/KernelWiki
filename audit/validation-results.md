@@ -1,6 +1,10 @@
 # Validation results
 
-> Historical corpus baseline: the 158-test receipt below predates the multi-architecture extension. Run the current test suite for the expanded routing/evidence checks; device receipts are under `evidence/multiarch-2026-10-27/`.
+> Historical audit receipt, preserved from the 2026-08 audit. Test commands
+> and counts below describe the Git history retained at `dd4c2b2`, not files or
+> tests shipped in the installed skill. Top-level `tests/` and `probes/` were
+> removed during package cleanup. See [the device validation summary](../evidence/multiarch-validation-2026-10-27.md)
+> for the separately recorded 2026-10-27 experiments.
 
 Environment: isolated `/tmp/kernelwiki-factual-audit-venv-20260818` with
 PyYAML 6.0.3. Final post-quorum rerun after clean Rounds 31 and 32:
@@ -13,7 +17,7 @@ two semantic patch mismatches caused by upstream Git object-ID abbreviation
 width, and unittest discovery failed with exit 5 because zero tests existed.
 The initial size was 24.72 MiB / 25 MiB and core manifests contained 252 PRs.
 
-## Final post-quorum matrix
+## Captured post-quorum matrix
 
 | Command | Exit | Verdict | Exact result |
 | --- | ---: | --- | --- |
@@ -40,8 +44,8 @@ Additional mandatory gates:
 - narrative source-PR backlink scan: zero absent IDs;
 - coverage: 1,091/1,091 files terminal, 100.0%, 36,457 examined claim units.
 
-This complete matrix is rerun after any accepted independent-review finding and
-again after the clean-round quorum.
+This captured matrix was rerun after accepted independent-review findings and
+after the clean-round quorum; it is not an instruction to invoke removed tests.
 
 Rounds 31 and 32 are consecutive exact-model clean reviews. The independent
 review quorum is complete at 2/2, and this matrix is the required final rerun

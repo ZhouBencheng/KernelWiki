@@ -48,7 +48,14 @@ export BLACKWELL_WIKI_ROOT=/path/to/KernelWiki
 - Auto-generated cross-reference indices — [by architecture](queries/by-architecture.md) / problem / technique / hardware feature / repo / kernel type / language.
 - Reviewed candidate ledgers with include/defer/exclude decisions.
 - **Hybrid version-claim registry** ([`data/version-claims.yaml`](data/version-claims.yaml)) — per-page `version_sensitive: <id>` pointers + central registry, validated for bidirectional consistency
+- [Observed device validation](evidence/multiarch-validation-2026-10-27.md) records bounded probe and profiler results in Markdown.
 - Run `python3 scripts/repo_status.py` for current corpus counts.
+
+The installed skill omits maintenance regression tests, experimental probe
+sources, and generated process JSON inventories. Their historical snapshots
+remain in Git at `dd4c2b2`; the two JSON receipts consumed by `validate.py`
+remain: `data/pr-architecture-evidence.json` and
+`audit/pr-file-cap-reconstruction.json`. They protect upstream source provenance.
 
 ## Query Tools
 

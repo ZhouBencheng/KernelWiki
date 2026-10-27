@@ -57,7 +57,11 @@ small-M BF16 or strict-FP32 question does not authorize an NVFP4 replacement.
 4. **Benefit:** ordinary timing outside profiler replay supports a claim under
    recorded conditions. Compilation or correctness is not speedup evidence.
 
-Preserve raw receipts with digests. A source-confidence `verified` tag means
+Preserve raw receipts with digests outside the installed skill; retain readable
+results and artifact digests in Markdown, as in [the observed validation
+summary](../evidence/multiarch-validation-2026-10-27.md). Mandatory
+machine-consumed upstream provenance receipts remain in the package. A
+source-confidence `verified` tag means
 source evidence, not that all four gates passed. Basic copy/reduce tests do not
 validate matrix instructions, specialized memory or an operator's speedup.
 

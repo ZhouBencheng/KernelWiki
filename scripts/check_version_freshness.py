@@ -12,10 +12,9 @@ Reads checked-in inputs only:
 Prints structured warnings; exits 0 in advisory mode (default), 1 in --strict
 mode when any warning fires.
 
-This script is required to be NETWORK-FREE. A static-analysis check (in CI)
-rejects any future PR that imports HTTP libraries or shells out to git/gh
-for remote fetches; see tests/check_freshness_offline.sh for the exact grep.
-Do not import or shell out to network tools from here.
+This script is required to be NETWORK-FREE. Do not import HTTP libraries or
+shell out to git/gh or other network tools for remote fetches. The historical
+static-analysis check is retained in Git snapshot dd4c2b2, outside this package.
 """
 
 from __future__ import annotations

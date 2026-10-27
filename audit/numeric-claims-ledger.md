@@ -1,13 +1,21 @@
 # Numeric claims ledger
 
-Comparison base: `52b8eb06f95ca9b6a1906200b1153e3e21d89c32`. Current scan and evidence access date: 2026-08-18 UTC.
+Comparison base: `52b8eb06f95ca9b6a1906200b1153e3e21d89c32`. Captured scan and evidence access date: 2026-08-18 UTC.
 
-The scanner covers tracked Markdown/YAML plus current untracked in-scope Markdown/YAML, excluding audit internals and the user's `plan.md`. Baseline-only candidates remain below with a terminal `removed` or `corrected` disposition.
+The captured scanner covered tracked Markdown/YAML plus untracked in-scope
+Markdown/YAML, excluding audit internals and the user's `plan.md`. Baseline-only
+candidates remain below with a terminal `removed` or `corrected` disposition.
+`current` labels the captured source scan, not a fresh scan of the installed
+package. The one maintenance-fixture occurrence is now explicitly historical:
+its file was removed with top-level `tests/` and is retrievable at Git snapshot
+`dd4c2b2`. Its non-material classification and the captured disposition totals
+are unchanged; no source occurrence is substituted for it.
 
 ## Summary
 
 - Total candidate occurrences: 3808
-- Current candidate occurrences: 1860
+- Captured source-scan occurrences: 1859
+- Historical maintenance-fixture occurrences: 1
 - Baseline-only retained-in-ledger occurrences: 1948
 - Material occurrences (including removed/corrected history): 3069
 - supported: 1121
@@ -3801,7 +3809,7 @@ Evidence receipt codes: `BASE-REMOVED` means the exact comparison-base occurrenc
 | current | `sources/prs/vllm/PR-42153.md:75` | `1.043x` | non-material | NON-MATERIAL: Purpose |
 | current | `sources/prs/vllm/PR-42774.md:5` | `2.4%` | non-material | NON-MATERIAL: document/frontmatter |
 | current | `sources/prs/vllm/PR-42774.md:5` | `~5.7%` | non-material | NON-MATERIAL: document/frontmatter |
-| current | `tests/fixtures/ledger-shape-bad.yaml:5` | `2 rows` | non-material | NON-MATERIAL: (1 include + 1 exclude + 0 defer = 2 rows, but |
+| historical-dd4c2b2 | `tests/fixtures/ledger-shape-bad.yaml:5` | `2 rows` | non-material | NON-MATERIAL: removed maintenance-fixture arithmetic, not a performance claim; original `(1 include + 1 exclude + 0 defer = 2 rows, but` at Git snapshot `dd4c2b2` |
 | current | `wiki/architectures/sm100/2sm-cooperative.md:2` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
 | current | `wiki/architectures/sm100/2sm-cooperative.md:6` | `2sm` | non-material | NON-MATERIAL: document/frontmatter |
 | current | `wiki/architectures/sm100/2sm-cooperative.md:10` | `2-SM` | non-material | NON-MATERIAL: document/frontmatter |

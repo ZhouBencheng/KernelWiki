@@ -1,6 +1,10 @@
-# Mandatory regression-test ledger
+# Historical regression-test ledger
 
-> Historical corpus baseline: the 158-test receipt below predates the multi-architecture extension. Run the current test suite for the expanded routing/evidence checks; device receipts are under `evidence/multiarch-2026-10-27/`.
+> Historical audit receipt, preserved from the 2026-08 audit. Test commands
+> and counts below describe the Git history retained at `dd4c2b2`, not files or
+> tests shipped in the installed skill. Top-level `tests/` and `probes/` were
+> removed during package cleanup. See [the device validation summary](../evidence/multiarch-validation-2026-10-27.md)
+> for the separately recorded 2026-10-27 experiments.
 
 ## Baseline
 
@@ -8,7 +12,7 @@
 because the starting revision discovered zero tests. Architecture, generated
 body, scope, metadata, query, and provenance guards were absent.
 
-## Current full discovery gate — 2026-08-19 UTC
+## Captured full discovery gate — 2026-08-19 UTC
 
 Command: `python3 -m unittest discover -s tests -p 'test_*.py'`
 
@@ -150,4 +154,4 @@ unknown architecture dispositions. Candidate and scope row sets match exactly.
 
 The generated-manifest verifier additionally regenerates `core-prs.yaml`,
 `cute-dsl-universe.yaml`, and `triton-universe.yaml` in memory and compares
-bytes. Current result: **pass**, 110 core PRs, checksum `cde1aab41b70…`.
+bytes. Captured result: **pass**, 110 core PRs, checksum `cde1aab41b70…`.

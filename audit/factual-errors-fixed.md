@@ -1,5 +1,9 @@
 # Factual errors fixed
 
+> Historical correction log. References to regression tests and their counts
+> describe the audit retained in Git snapshot `dd4c2b2`; those maintenance tests
+> are no longer shipped. Active source/provenance validators remain in `scripts/`.
+
 Comparison base: `52b8eb06f95ca9b6a1906200b1153e3e21d89c32`. Evidence access date: 2026-08-18 UTC.
 
 This table records **65 correction families**. Counts are families rather than individual edited sentences or generated pages; corpus-wide path-level receipts are in the architecture, numeric, and scope ledgers.

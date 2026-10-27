@@ -53,22 +53,22 @@ and clock conditions with any performance record.
 
 ## Observed validation: 2026-10-27
 
-The [sanitized receipt](../../../evidence/multiarch-2026-10-27/sm110.json) records
+The [validation summary](../../../evidence/multiarch-validation-2026-10-27.md) records
 one device reporting 20 SMs, CC 11.0, compiled natively for
 `sm_110` using nvcc 13.2.86. These are observations of
 one SKU/configuration, not architecture constants.
 
-The [retained probes](../../../probes/multiarch/README.md) passed vector copy,
+The historical probe runs summarized there passed vector copy,
 block reduction, FP32 64×64×64 SIMT matrix multiplication, a 4-byte ordinary
 `cp.async` copy and one-warp BF16-input/FP32-accumulator WMMA 16×16×16. Their
 checked inputs yielded zero observed matrix error. This validates only these
 operations, shapes and contracts; it does not validate tcgen05, TMEM, TMA,
 WGMMA, two-CTA kernels, all dtypes/shapes or an optimization speedup.
 
-The receipt separately records profiler collection/read results and limitations.
-Original report hashes identify external raw reports; the reports are not
-bundled here. Read the receipt's actual collector/reader pair rather than
-assuming the installed collector provides a usable local Python reader.
+The summary separately records profiler collection/read results, reader API
+availability and limitations. Report hashes identify external raw reports; the
+reports are not bundled here. Use the observed collector/reader pair when
+interpreting those results.
 
 ## Evidence levels
 
